@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard · JKUAT Scheduler</title>
+    <link rel="icon" type="image/png" href="/static/images/jkuat-logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:      #06080f;
+            --panel:   #0b0f1c;
+            --surface: #101524;
+            --card:    #131929;
+            --lift:    #181f30;
+            --accent:  #3b82f6;
+            --cyan:    #06b6d4;
+            --teal:    #14b8a6;
+            --amber:   #f59e0b;
+            --rose:    #f43f5e;
+            --violet:  #8b5cf6;
+            --green:   #22c55e;
+            --border:  rgba(255,255,255,0.06);
+            --border2: rgba(255,255,255,0.11);
+            --text:    #dce4f5;
+            --muted:   rgba(220,228,245,0.42);
+            --mono:    'JetBrains Mono', monospace;
+            --sans:    'Space Grotesk', sans-serif;
+            --sidebar-w: 256px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Ambient background */
+        .ambient {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background:
+                radial-gradient(ellipse 60% 50% at 85% 5%,  rgba(59,130,246,.12) 0%, transparent 55%),
+                radial-gradient(ellipse 45% 40% at 5%  90%, rgba(20,184,166,.10) 0%, transparent 55%),
+                radial-gradient(ellipse 35% 30% at 50% 50%, rgba(139,92,246,.06) 0%, transparent 60%);
+        }
+        .grid-overlay {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+            background-size: 52px 52px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+        }
+
+        /* ── Sidebar overlay (mobile) ── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 19;
+            background: rgba(0,0,0,.55);
+            backdrop-filter: blur(2px);
+            animation: fadeIn .2s ease both;
+        }
+        .sidebar-overlay.show { display: block; }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-w); min-width: var(--sidebar-w);
+            height: 100vh;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            position: relative; z-index: 20;
+            animation: sideIn .5s cubic-bezier(.22,1,.36,1) both;
+            transition: transform .28s cubic-bezier(.22,1,.36,1);
+            flex-shrink: 0;
+        }
+        @keyframes sideIn { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+
+        .sb-brand {
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sb-logo-box {
+            width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(59,130,246,.4);
+        }
+        .sb-logo-box img { width: 26px; height: 26px; object-fit: contain; filter: brightness(10); }
+        .sb-title { font-size: 13px; font-weight: 700; line-height: 1.3; }
+        .sb-title small { display: block; font-size: 10px; font-weight: 400; color: var(--muted); font-family: var(--mono); letter-spacing: .04em; }
+
+        /* Close button inside sidebar (mobile only) */
+        .sb-close {
+            display: none;
+            margin-left: auto;
+            background: none; border: none;
+            color: var(--muted); cursor: pointer;
+            padding: 6px; border-radius: 7px;
+            font-size: 18px; line-height: 1;
+            transition: color .15s, background .15s;
+        }
+        .sb-close:hover { color: var(--text); background: rgba(255,255,255,.06); }
+
+        .sb-admin-tag {
+            margin: 16px 20px;
+            padding: 10px 14px; border-radius: 10px;
+            background: rgba(245,158,11,.08);
+            border: 1px solid rgba(245,158,11,.2);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .admin-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); flex-shrink: 0; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+        .admin-label { font-size: 11px; font-weight: 600; color: var(--amber); letter-spacing: .06em; text-transform: uppercase; }
+
+        .sb-nav { padding: 8px 12px; flex: 1; overflow-y: auto; }
+        .sb-section-label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; padding: 14px 8px 6px; font-family: var(--mono); }
+
+        .sb-link {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 10px; border-radius: 9px;
+            font-size: 13px; font-weight: 500; color: var(--muted);
+            text-decoration: none; cursor: pointer; border: none;
+            background: none; width: 100%; text-align: left;
+            transition: background .15s, color .15s;
+            margin-bottom: 2px;
+        }
+        .sb-link .sb-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; transition: .15s; }
+        .sb-link:hover { background: rgba(255,255,255,.04); color: var(--text); }
+        .sb-link.active { background: rgba(59,130,246,.12); color: var(--text); border: 1px solid rgba(59,130,246,.2); }
+        .sb-link.active .sb-icon { box-shadow: 0 0 12px currentColor; }
+
+        .sb-link .sb-icon.blue   { background: rgba(59,130,246,.15);  color: var(--accent); }
+        .sb-link .sb-icon.cyan   { background: rgba(6,182,212,.13);   color: var(--cyan); }
+        .sb-link .sb-icon.teal   { background: rgba(20,184,166,.13);  color: var(--teal); }
+        .sb-link .sb-icon.amber  { background: rgba(245,158,11,.13);  color: var(--amber); }
+        .sb-link .sb-icon.violet { background: rgba(139,92,246,.13);  color: var(--violet); }
+        .sb-link .sb-icon.rose   { background: rgba(244,63,94,.12);   color: var(--rose); }
+        .sb-link .sb-icon.green  { background: rgba(34,197,94,.12);   color: var(--green); }
+
+        .sb-badge { margin-left: auto; font-size: 10px; font-weight: 700; font-family: var(--mono); padding: 2px 7px; border-radius: 99px; }
+        .sb-badge.warn { background: rgba(245,158,11,.15); color: var(--amber); }
+        .sb-badge.ok   { background: rgba(34,197,94,.12);  color: var(--green); }
+
+        .sb-bottom { padding: 14px 12px; border-top: 1px solid var(--border); }
+        .sb-logout { display:flex; align-items:center; gap:10px; padding:10px 10px; border-radius:9px; font-size:13px; color:var(--muted); text-decoration:none; transition:.15s; }
+        .sb-logout:hover { background:rgba(244,63,94,.08); color:var(--rose); }
+
+        /* ── Main ── */
+        .main {
+            flex: 1; display: flex; flex-direction: column;
+            height: 100vh; overflow: hidden;
+            position: relative; z-index: 1;
+            min-width: 0;
+        }
+
+        /* ── Topbar ── */
+        .topbar {
+            height: 60px; min-height: 60px;
+            padding: 0 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(6,8,15,.7); backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+            animation: topIn .5s .1s cubic-bezier(.22,1,.36,1) both;
+        }
+        @keyframes topIn { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
+
+        /* Hamburger button */
+        .hamburger {
+            display: none;
+            background: none; border: none;
+            color: var(--muted); cursor: pointer;
+            padding: 6px; border-radius: 8px;
+            flex-shrink: 0;
+            transition: color .15s, background .15s;
+        }
+        .hamburger:hover { color: var(--text); background: rgba(255,255,255,.06); }
+
+        .topbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+        .page-label { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .page-crumb { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; display: none; }
+        .topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .topbar-pill {
+            display: flex; align-items: center; gap: 7px; padding: 7px 12px;
+            border-radius: 99px; border: 1px solid var(--border2);
+            background: rgba(255,255,255,.03);
+            font-size: 12px; color: var(--muted); font-family: var(--mono);
+            white-space: nowrap;
+        }
+        .topbar-pill span { color: var(--text); font-weight: 600; }
+        .back-btn { display:flex; align-items:center; gap:7px; padding:8px 12px; border-radius:9px; border:1px solid var(--border); background:rgba(255,255,255,.03); color:var(--muted); font-size:12px; text-decoration:none; transition:.15s; white-space:nowrap; }
+        .back-btn:hover { color:var(--text); border-color:var(--border2); }
+        .back-btn-text { display: inline; }
+
+        /* ── Content ── */
+        .content {
+            flex: 1; overflow-y: auto; padding: 28px 28px 48px;
+            scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.06) transparent;
+        }
+        .content::-webkit-scrollbar { width: 4px; }
+        .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,.06); border-radius: 99px; }
+
+        /* ── Sections ── */
+        .section { display: none; animation: fadeUp .4s cubic-bezier(.22,1,.36,1) both; }
+        .section.active { display: block; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ── Section header ── */
+        .sec-header { margin-bottom: 24px; }
+        .sec-header h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 6px; }
+        .sec-header p  { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 560px; }
+
+        /* ── Flash ── */
+        .flash { padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .flash.success { border: 1px solid rgba(34,197,94,.3); background: rgba(34,197,94,.08); color: #4ade80; }
+        .flash.error   { border: 1px solid rgba(244,63,94,.3); background: rgba(244,63,94,.08); color: #fb7185; }
+
+        /* ── Stats grid ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px; margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 18px 16px; position: relative; overflow: hidden;
+            transition: transform .2s, border-color .2s; cursor: default;
+        }
+        .stat-card:hover { transform: translateY(-3px); border-color: var(--border2); }
+        .stat-card::after { content:''; position:absolute; bottom:0;left:0;right:0;height:2px; }
+        .stat-card.sb::after { background: linear-gradient(90deg,var(--accent),transparent); }
+        .stat-card.sc::after { background: linear-gradient(90deg,var(--cyan),transparent); }
+        .stat-card.st::after { background: linear-gradient(90deg,var(--teal),transparent); }
+        .stat-card.sa::after { background: linear-gradient(90deg,var(--amber),transparent); }
+        .stat-icon-box { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:16px; }
+        .stat-icon-box.b{background:rgba(59,130,246,.14)} .stat-icon-box.c{background:rgba(6,182,212,.12)}
+        .stat-icon-box.t{background:rgba(20,184,166,.12)}  .stat-icon-box.a{background:rgba(245,158,11,.12)}
+        .stat-num { font-size: 1.75rem; font-weight: 700; font-family: var(--mono); line-height: 1; }
+        .stat-num.b{color:#7eb5ff} .stat-num.c{color:var(--cyan)} .stat-num.t{color:var(--teal)} .stat-num.a{color:var(--amber)}
+        .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+        /* ── Layouts ── */
+        .two-col { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+        .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+        /* ── Panel ── */
+        .panel {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 18px; overflow: hidden;
+        }
+        .panel-head {
+            padding: 18px 20px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+        }
+        .panel-title { font-size: 14px; font-weight: 700; }
+        .panel-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .panel-body  { padding: 20px; }
+
+        /* ── Forms ── */
+        .field { margin-bottom: 16px; }
+        .field:last-of-type { margin-bottom: 0; }
+        .f-label { display:block; font-size:10px; font-weight:700; letter-spacing:.09em; color:var(--muted); margin-bottom:7px; text-transform:uppercase; font-family:var(--mono); }
+        .input-wrap { position: relative; }
+        .input-wrap .ii { position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;display:flex;align-items:center;transition:.15s; }
+        .input-wrap:focus-within .ii { color: var(--cyan); }
+
+        input[type="text"],
+        input[type="number"],
+        select, textarea {
+            width: 100%; padding: 11px 12px 11px 38px;
+            background: rgba(255,255,255,.04); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text);
+            font-size: 13px; font-family: var(--sans); outline: none;
+            transition: border-color .2s, background .2s, box-shadow .2s;
+            -webkit-appearance: none; appearance: none;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus, textarea:focus {
+            border-color: rgba(59,130,246,.5);
+            background: rgba(59,130,246,.06);
+            box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+        }
+        input::placeholder, textarea::placeholder { color: rgba(220,228,245,.2); }
+        select { cursor: pointer; }
+        select option { background: var(--panel); color: var(--text); }
+        textarea { padding-top: 11px; padding-left: 38px; resize: vertical; min-height: 72px; }
+
+        .two-field { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 11px 18px; border-radius: 10px; border: none;
+            font-size: 13px; font-weight: 600; font-family: var(--sans);
+            cursor: pointer; transition: transform .18s, box-shadow .18s, opacity .18s;
+            position: relative; overflow: hidden; text-decoration: none;
+        }
+        .btn::before { content:''; position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent); }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+        .btn.full { width: 100%; }
+        .btn.blue   { background: var(--accent);  color: #fff; box-shadow: 0 4px 18px rgba(59,130,246,.35); }
+        .btn.blue:hover   { box-shadow: 0 8px 28px rgba(59,130,246,.55); }
+        .btn.cyan   { background: var(--cyan);   color: var(--bg); box-shadow: 0 4px 18px rgba(6,182,212,.35); }
+        .btn.cyan:hover   { box-shadow: 0 8px 28px rgba(6,182,212,.55); }
+        .btn.teal   { background: var(--teal);   color: #fff; box-shadow: 0 4px 18px rgba(20,184,166,.35); }
+        .btn.teal:hover   { box-shadow: 0 8px 28px rgba(20,184,166,.55); }
+        .btn.amber  { background: var(--amber);  color: var(--bg); box-shadow: 0 4px 18px rgba(245,158,11,.3); }
+        .btn.amber:hover  { box-shadow: 0 8px 28px rgba(245,158,11,.5); }
+        .btn.violet { background: var(--violet); color: #fff; box-shadow: 0 4px 18px rgba(139,92,246,.35); }
+        .btn.violet:hover { box-shadow: 0 8px 28px rgba(139,92,246,.55); }
+        .btn.ghost  { background: rgba(255,255,255,.05); color: var(--muted); border: 1px solid var(--border); box-shadow: none; }
+        .btn.ghost:hover  { color: var(--text); background: rgba(255,255,255,.08); }
+        .btn.rose   { background: var(--rose); color: #fff; box-shadow: 0 4px 18px rgba(244,63,94,.3); }
+
+        /* ── Seed cards ── */
+        .seed-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 20px;
+            display: flex; flex-direction: column; gap: 14px;
+            transition: border-color .2s, transform .2s;
+        }
+        .seed-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+        .seed-card-top { display: flex; align-items: flex-start; gap: 14px; }
+        .seed-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+        .seed-icon.blue   { background: rgba(59,130,246,.14); }
+        .seed-icon.cyan   { background: rgba(6,182,212,.12); }
+        .seed-icon.teal   { background: rgba(20,184,166,.12); }
+        .seed-icon.amber  { background: rgba(245,158,11,.12); }
+        .seed-icon.violet { background: rgba(139,92,246,.12); }
+        .seed-card-title  { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .seed-card-desc   { font-size: 12px; color: var(--muted); line-height: 1.6; }
+        .seed-status {
+            display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+            border-radius: 8px; font-size: 11px; font-weight: 600; font-family: var(--mono);
+        }
+        .seed-status.done { background: rgba(34,197,94,.08); color: var(--green); border: 1px solid rgba(34,197,94,.2); }
+        .seed-status.pending { background: rgba(245,158,11,.08); color: var(--amber); border: 1px solid rgba(245,158,11,.2); }
+        .seed-dot { width:6px;height:6px;border-radius:50%; flex-shrink:0; }
+        .seed-dot.done { background:var(--green); }
+        .seed-dot.pending { background:var(--amber); animation:pulse 2s infinite; }
+
+        /* ── Tables ── */
+        .table-wrap { overflow-x: auto; max-height: 480px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.06) transparent; -webkit-overflow-scrolling: touch; }
+        .table-wrap::-webkit-scrollbar { width: 4px; }
+        .table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,.06); border-radius: 99px; }
+        table { width: 100%; border-collapse: collapse; min-width: 400px; }
+        thead th { padding: 10px 12px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1; font-family: var(--mono); white-space: nowrap; }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(255,255,255,.02); }
+        tbody td { padding: 11px 12px; font-size: 12px; vertical-align: middle; }
+        .td-mono { font-family: var(--mono); font-size: 11px; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:700; letter-spacing:.04em; white-space:nowrap; }
+        .badge.blue   { background:rgba(59,130,246,.14); color:#7eb5ff; }
+        .badge.cyan   { background:rgba(6,182,212,.12);  color:var(--cyan); }
+        .badge.teal   { background:rgba(20,184,166,.12); color:var(--teal); }
+        .badge.amber  { background:rgba(245,158,11,.12); color:var(--amber); }
+        .badge.violet { background:rgba(139,92,246,.12); color:#b78dff; }
+        .badge.green  { background:rgba(34,197,94,.12);  color:var(--green); }
+        .badge.rose   { background:rgba(244,63,94,.10);  color:#fb7185; }
+        .badge.grey   { background:rgba(255,255,255,.06); color:var(--muted); }
+
+        /* ── Dots ── */
+        .dot { width:7px;height:7px;border-radius:50%;display:inline-block; }
+        .dot.green  { background:var(--green); box-shadow:0 0 6px var(--green); }
+        .dot.grey   { background:rgba(255,255,255,.2); }
+        .dot.amber  { background:var(--amber); }
+
+        /* ── Search bar ── */
+        .search-bar { position: relative; }
+        .search-bar svg { position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none; }
+        .search-bar input { padding:8px 12px 8px 34px; border-radius:9px; border:1px solid var(--border); background:rgba(255,255,255,.04); color:var(--text); font-size:12px; font-family:var(--sans); outline:none; width:180px; transition:.2s; }
+        .search-bar input:focus { border-color:rgba(59,130,246,.4); background:rgba(59,130,246,.06); }
+        .search-bar input::placeholder { color:rgba(220,228,245,.2); }
+
+        /* ── Course preview ── */
+        .course-preview { display:none; padding:12px 14px; border-radius:10px; background:rgba(6,182,212,.06); border:1px solid rgba(6,182,212,.18); font-size:12px; color:rgba(220,228,245,.7); line-height:1.7; margin-top:8px; }
+        .course-preview.show { display:block; }
+        .course-preview strong { color:var(--cyan); }
+
+        /* ── Mini stats ── */
+        .mini-stats { display:flex;gap:16px;flex-wrap:wrap; }
+        .mini-stat { font-size:12px;color:var(--muted); }
+        .mini-stat b { display:block;font-size:16px;font-weight:700;font-family:var(--mono);color:var(--text);margin-bottom:1px; }
+
+        /* ── Empty state ── */
+        .empty-state { text-align:center;padding:36px 20px;color:var(--muted);font-size:13px; }
+        .empty-state div { font-size:30px;margin-bottom:10px; }
+
+        /* ─────────────────────────────────────────
+           RESPONSIVE BREAKPOINTS
+        ───────────────────────────────────────── */
+
+        /* ── Tablet: 1100px and below ── */
+        @media (max-width: 1100px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .two-col { grid-template-columns: 1fr; }
+            .three-col { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* ── Large mobile / small tablet: 860px and below ── */
+        @media (max-width: 860px) {
+            :root { --sidebar-w: 260px; }
+
+            /* Sidebar becomes a slide-in drawer */
+            .sidebar {
+                position: fixed;
+                top: 0; left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 20;
+                box-shadow: 4px 0 32px rgba(0,0,0,.5);
+                /* Override the entry animation so transform is fully controlled by JS class */
+                animation: none;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sb-close { display: flex; }
+
+            .hamburger { display: flex; }
+
+            .topbar { padding: 0 16px; height: 56px; min-height: 56px; }
+            .back-btn-text { display: none; }
+            .back-btn { padding: 8px 10px; }
+
+            .topbar-pill { display: none; }
+
+            .content { padding: 20px 16px 48px; }
+            .sec-header h2 { font-size: 1.2rem; }
+        }
+
+        /* ── Mobile: 600px and below ── */
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .three-col { grid-template-columns: 1fr; }
+            .two-field { grid-template-columns: 1fr; gap: 0; }
+            .stat-num { font-size: 1.5rem; }
+
+            .panel-head { gap: 8px; }
+            .panel-head > div:last-child { width: 100%; }
+            .search-bar input { width: 100%; }
+
+            .seed-card { padding: 16px; }
+            .seed-icon { width: 38px; height: 38px; font-size: 17px; }
+
+            /* Run all seeds row wraps nicely */
+            .run-all-row { flex-direction: column !important; align-items: flex-start !important; }
+            .run-all-btns { width: 100%; }
+            .run-all-btns .btn { flex: 1; }
+        }
+
+        /* ── Very small: 400px and below ── */
+        @media (max-width: 400px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .stat-card { padding: 14px 12px; border-radius: 12px; }
+            .stat-icon-box { width: 30px; height: 30px; font-size: 14px; margin-bottom: 10px; }
+            .stat-num { font-size: 1.3rem; }
+            .stat-lbl { font-size: 10px; }
+            .content { padding: 16px 12px 48px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ambient"></div>
+<div class="grid-overlay"></div>
+
+<!-- Mobile sidebar overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+        <div class="sb-logo-box">
+            <img src="{{ url_for('static', filename='images/jkuat-logo.png') }}" alt="JKUAT">
+        </div>
+        <div style="flex:1;min-width:0">
+            <div class="sb-title">JKUAT Scheduler <small>admin@system</small></div>
+        </div>
+        <button class="sb-close" onclick="closeSidebar()" aria-label="Close menu">✕</button>
+    </div>
+
+    <div class="sb-admin-tag">
+        <div class="admin-dot"></div>
+        <div class="admin-label">Administrator</div>
+    </div>
+
+    <nav class="sb-nav">
+        <div class="sb-section-label">Overview</div>
+
+        <button class="sb-link active" onclick="showSection('overview', this)">
+            <span class="sb-icon blue">📊</span>
+            Overview
+        </button>
+
+        <div class="sb-section-label">Data Management</div>
+
+        <button class="sb-link" onclick="showSection('rooms', this)">
+            <span class="sb-icon cyan">🏛️</span>
+            Rooms
+            <span class="sb-badge" id="sb-rooms-badge">–</span>
+        </button>
+
+        <button class="sb-link" onclick="showSection('schools', this)">
+            <span class="sb-icon teal">🏫</span>
+            Schools &amp; Programmes
+            <span class="sb-badge" id="sb-schools-badge">–</span>
+        </button>
+
+        <button class="sb-link" onclick="showSection('courses', this)">
+            <span class="sb-icon amber">📚</span>
+            Courses
+            <span class="sb-badge" id="sb-courses-badge">–</span>
+        </button>
+
+        <div class="sb-section-label">Assignment</div>
+
+        <button class="sb-link" onclick="showSection('assign', this)">
+            <span class="sb-icon violet">🔗</span>
+            Assign Lecturers
+        </button>
+
+        <div class="sb-section-label">System</div>
+
+        <button class="sb-link" onclick="showSection('seed', this)">
+            <span class="sb-icon green">🌱</span>
+            Seed Utilities
+        </button>
+    </nav>
+
+    <div class="sb-bottom">
+        <a href="/lecturer" class="sb-logout">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Back to Dashboard
+        </a>
+    </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <!-- Hamburger (mobile only) -->
+            <button class="hamburger" onclick="openSidebar()" aria-label="Open menu">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+            <div>
+                <div class="page-label" id="page-label">System Overview</div>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="topbar-pill">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span id="topbar-time">–</span>
+            </div>
+            <a href="/logout" class="back-btn">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span class="back-btn-text">Sign Out</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for cat, msg in messages %}
+              <div class="flash {{ cat }}">
+                  {% if cat == 'success' %}✅{% else %}⚠️{% endif %} {{ msg }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- ══ SECTION: OVERVIEW ══ -->
+        <div class="section active" id="section-overview">
+            <div class="sec-header">
+                <h2>System Overview</h2>
+                <p>Monitor the state of the entire scheduling system — rooms, schools, courses, assignments and lectures at a glance.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card sb">
+                    <div class="stat-icon-box b">🏛️</div>
+                    <div class="stat-num b">{{ rooms|length }}</div>
+                    <div class="stat-lbl">Rooms</div>
+                </div>
+                <div class="stat-card sc">
+                    <div class="stat-icon-box c">🏫</div>
+                    <div class="stat-num c">{{ schools|length }}</div>
+                    <div class="stat-lbl">Schools</div>
+                </div>
+                <div class="stat-card st">
+                    <div class="stat-icon-box t">📚</div>
+                    <div class="stat-num t">{{ courses|length }}</div>
+                    <div class="stat-lbl">Courses</div>
+                </div>
+                <div class="stat-card sa">
+                    <div class="stat-icon-box a">👩‍🏫</div>
+                    <div class="stat-num a">{{ lecturers|length }}</div>
+                    <div class="stat-lbl">Lecturers</div>
+                </div>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom:24px">
+                <div class="stat-card sb">
+                    <div class="stat-icon-box b">🎓</div>
+                    <div class="stat-num b">{{ students|length }}</div>
+                    <div class="stat-lbl">Students</div>
+                </div>
+                <div class="stat-card sc">
+                    <div class="stat-icon-box c">📅</div>
+                    <div class="stat-num c">{{ total_lectures }}</div>
+                    <div class="stat-lbl">Lectures Scheduled</div>
+                </div>
+                <div class="stat-card st">
+                    <div class="stat-icon-box t">✅</div>
+                    <div class="stat-num t">{{ assigned_courses }}</div>
+                    <div class="stat-lbl">Courses Assigned</div>
+                </div>
+                <div class="stat-card sa">
+                    <div class="stat-icon-box a">⚠️</div>
+                    <div class="stat-num a">{{ unassigned_courses }}</div>
+                    <div class="stat-lbl">Unassigned Courses</div>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <!-- Recent lectures -->
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <div class="panel-title">Recent Lectures</div>
+                            <div class="panel-sub">Last 10 scheduled across all departments</div>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        {% if recent_lectures %}
+                        <table>
+                            <thead><tr><th>Course</th><th>Room</th><th>Day</th><th>Time</th></tr></thead>
+                            <tbody>
+                            {% for l in recent_lectures %}
+                            <tr>
+                                <td>
+                                    <div style="font-weight:600;font-size:12px">{{ l.course.name }}</div>
+                                    <div class="td-mono" style="color:var(--muted)">{{ l.course.code }}</div>
+                                </td>
+                                <td><span class="badge blue">{{ l.room_ref.name }}</span></td>
+                                <td style="font-size:11px;color:var(--muted)">{{ l.day[:3] }}</td>
+                                <td class="td-mono" style="font-size:11px">{{ l.start_time.strftime('%H:%M') }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="empty-state"><div>📭</div>No lectures scheduled yet.</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick actions + health -->
+                <div style="display:flex;flex-direction:column;gap:14px">
+                    <div class="panel">
+                        <div class="panel-head"><div class="panel-title">Quick Actions</div></div>
+                        <div class="panel-body" style="display:flex;flex-direction:column;gap:10px">
+                            <button class="btn blue full" onclick="showSection('rooms', document.querySelector('[onclick*=rooms]'))">🏛️ &nbsp;Manage Rooms</button>
+                            <button class="btn teal full" onclick="showSection('schools', document.querySelector('[onclick*=schools]'))">🏫 &nbsp;Manage Schools</button>
+                            <button class="btn amber full" onclick="showSection('courses', document.querySelector('[onclick*=courses]'))">📚 &nbsp;Manage Courses</button>
+                            <button class="btn violet full" onclick="showSection('assign', document.querySelector('[onclick*=assign]'))">🔗 &nbsp;Assign Lecturers</button>
+                            <button class="btn cyan full" onclick="showSection('seed', document.querySelector('[onclick*=seed]'))">🌱 &nbsp;Seed Utilities</button>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head"><div class="panel-title">System Health</div></div>
+                        <div class="panel-body" style="display:flex;flex-direction:column;gap:10px">
+                            {% set checks = [
+                                ('Rooms seeded', rooms|length > 0),
+                                ('Schools seeded', schools|length > 0),
+                                ('Courses seeded', courses|length > 0),
+                                ('Lecturers registered', lecturers|length > 0),
+                                ('All courses assigned', unassigned_courses == 0),
+                            ] %}
+                            {% for label, ok in checks %}
+                            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;gap:8px">
+                                <span style="color:var(--muted)">{{ label }}</span>
+                                <span class="badge {{ 'green' if ok else 'rose' }}">{{ '✓ Done' if ok else '✗ Pending' }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ SECTION: ROOMS ══ -->
+        <div class="section" id="section-rooms">
+            <div class="sec-header">
+                <h2>Room Management</h2>
+                <p>Add individual rooms or use the seed utility to populate all JKUAT standard venues at once.</p>
+            </div>
+
+            <div class="two-col">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div><div class="panel-title">Add New Room</div><div class="panel-sub">Register a venue manually</div></div>
+                    </div>
+                    <div class="panel-body">
+                        <form method="POST" action="/admin/add-room">
+                            <div class="field">
+                                <label class="f-label">Room Name / Code</label>
+                                <div class="input-wrap">
+                                    <span class="ii"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+                                    <input type="text" name="name" placeholder="e.g. LT1, Lab 5B, SR4" required>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="f-label">Building</label>
+                                <div class="input-wrap">
+                                    <span class="ii"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></span>
+                                    <input type="text" name="building" placeholder="e.g. Main Block, ICT Block" required>
+                                </div>
+                            </div>
+                            <div class="two-field">
+                                <div class="field">
+                                    <label class="f-label">Capacity</label>
+                                    <div class="input-wrap">
+                                        <span class="ii"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+                                        <input type="number" name="capacity" placeholder="e.g. 120" min="1" required>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="f-label">Room Type</label>
+                                    <div class="input-wrap">
+                                        <span class="ii"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 5 18.36"/></svg></span>
+                                        <select name="room_type" required>
+                                            <option value="" disabled selected>Select type</option>
+                                            <option value="lecture_hall">Lecture Hall</option>
+                                            <option value="lab">Computer Lab</option>
+                                            <option value="seminar">Seminar Room</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn blue full" style="margin-top:8px">+ Add Room</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <div class="panel-title">All Rooms</div>
+                            <div class="panel-sub">{{ rooms|length }} rooms registered</div>
+                        </div>
+                        <div class="search-bar" style="width:100%">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" placeholder="Search rooms…" oninput="filterTable('rooms-table', this.value)" style="width:100%">
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        {% if rooms %}
+                        <table id="rooms-table">
+                            <thead><tr><th>Name</th><th>Type</th><th>Cap.</th><th>Building</th><th>Status</th></tr></thead>
+                            <tbody>
+                            {% for r in rooms %}
+                            <tr>
+                                <td style="font-weight:700;font-family:var(--mono);font-size:12px">{{ r.name }}</td>
+                                <td>
+                                    {% if r.room_type == 'lecture_hall' %}<span class="badge blue">Hall</span>
+                                    {% elif r.room_type == 'lab' %}<span class="badge teal">Lab</span>
+                                    {% else %}<span class="badge amber">Seminar</span>{% endif %}
+                                </td>
+                                <td class="td-mono">{{ r.capacity }}</td>
+                                <td style="font-size:11px;color:var(--muted)">{{ r.building }}</td>
+                                <td><span class="dot {{ 'green' if r.is_active else 'grey' }}"></span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="empty-state"><div>🏛️</div>No rooms yet. Add one or use Seed Utilities.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ SECTION: SCHOOLS ══ -->
+        <div class="section" id="section-schools">
+            <div class="sec-header">
+                <h2>Schools &amp; Programmes</h2>
+                <p>View all registered schools and their programmes. Use seed utilities to populate JKUAT's standard structure.</p>
+            </div>
+
+            {% if schools %}
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px">
+                {% for school in schools %}
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                                <span class="badge cyan td-mono">{{ school.code }}</span>
+                            </div>
+                            <div class="panel-title">{{ school.name }}</div>
+                            {% if school.description %}<div class="panel-sub">{{ school.description }}</div>{% endif %}
+                        </div>
+                    </div>
+                    <div class="panel-body" style="padding:0">
+                        {% if school.programmes %}
+                        <table style="min-width:0">
+                            <thead><tr><th>Code</th><th>Programme</th><th>Yrs</th><th>Courses</th></tr></thead>
+                            <tbody>
+                            {% for p in school.programmes %}
+                            <tr>
+                                <td><span class="badge violet td-mono">{{ p.code }}</span></td>
+                                <td style="font-size:12px">{{ p.name }}</td>
+                                <td class="td-mono">{{ p.duration }}</td>
+                                <td class="td-mono">{{ p.courses|length }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div style="padding:16px;font-size:12px;color:var(--muted);text-align:center">No programmes yet</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="panel">
+                <div class="empty-state"><div>🏫</div>No schools seeded yet.<br><br>
+                    <button class="btn teal" onclick="showSection('seed', document.querySelector('[onclick*=seed]'))">🌱 Go to Seed Utilities</button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ══ SECTION: COURSES ══ -->
+        <div class="section" id="section-courses">
+            <div class="sec-header">
+                <h2>Course Management</h2>
+                <p>View all courses across all programmes. Filter by programme or year, and track assignment status.</p>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head" style="flex-wrap:wrap;gap:12px">
+                    <div>
+                        <div class="panel-title">All Courses</div>
+                        <div class="mini-stats" style="margin-top:8px">
+                            <div class="mini-stat"><b>{{ courses|length }}</b>Total</div>
+                            <div class="mini-stat"><b style="color:var(--teal)">{{ assigned_courses }}</b>Assigned</div>
+                            <div class="mini-stat"><b style="color:var(--amber)">{{ unassigned_courses }}</b>Unassigned</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%">
+                        <select style="flex:1;min-width:120px;padding:8px 12px;font-size:12px" onchange="filterCourseTable(this.value)" id="prog-filter-select">
+                            <option value="">All Programmes</option>
+                            {% for prog in programmes %}
+                            <option value="{{ prog.code }}">{{ prog.code }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="search-bar" style="flex:1;min-width:140px">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" placeholder="Search courses…" oninput="filterTable('courses-table', this.value)" style="width:100%">
+                        </div>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    {% if courses %}
+                    <table id="courses-table">
+                        <thead><tr><th>Code</th><th>Course Name</th><th>Programme</th><th>Year</th><th>Sem</th><th>Lecturer</th><th>Students</th></tr></thead>
+                        <tbody>
+                        {% for c in courses %}
+                        <tr data-prog="{{ c.programme.code }}">
+                            <td class="td-mono" style="font-weight:700;color:var(--cyan)">{{ c.code }}</td>
+                            <td style="font-weight:500;font-size:12px;max-width:160px">{{ c.name }}</td>
+                            <td><span class="badge violet">{{ c.programme.code }}</span></td>
+                            <td class="td-mono">{{ c.year }}</td>
+                            <td class="td-mono">{{ c.semester }}</td>
+                            <td>
+                                {% if c.lecturer %}
+                                    <div style="display:flex;align-items:center;gap:6px">
+                                        <span class="dot green"></span>
+                                        <span style="font-size:11px;font-weight:600">{{ c.lecturer.name }}</span>
+                                    </div>
+                                {% else %}
+                                    <span class="badge rose">Unassigned</span>
+                                {% endif %}
+                            </td>
+                            <td class="td-mono">{{ c.enrollments|length }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state"><div>📚</div>No courses seeded yet.<br><br>
+                        <button class="btn amber" onclick="showSection('seed', document.querySelector('[onclick*=seed]'))">🌱 Go to Seed Utilities</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ SECTION: ASSIGN ══ -->
+        <div class="section" id="section-assign">
+            <div class="sec-header">
+                <h2>Assign Lecturers to Courses</h2>
+                <p>Select a course and assign a lecturer. Once assigned, the lecturer can schedule lectures for that course.</p>
+            </div>
+
+            <div class="two-col">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div><div class="panel-title">New Assignment</div><div class="panel-sub">Bind a lecturer to a course</div></div>
+                    </div>
+                    <div class="panel-body">
+                        <form method="POST" action="/admin/assign-lecturer">
+                            <div class="field">
+                                <label class="f-label">Course</label>
+                                <div class="input-wrap">
+                                    <span class="ii"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+                                    <select name="course_id" required onchange="onCourseSelect(this)">
+                                        <option value="" disabled selected>Select a course</option>
+                                        {% set cur_prog = namespace(id=None) %}
+                                        {% for c in courses %}
+                                            {% if c.programme_id != cur_prog.id %}
+                                                {% set cur_prog.id = c.programme_id %}
+                                                <optgroup label="{{ c.programme.code }} — {{ c.programme.name }}">
+                                            {% endif %}
+                                            <option value="{{ c.id }}"
+                                                    data-code="{{ c.code }}" data-name="{{ c.name }}"
+                                                    data-prog="{{ c.programme.code }}" data-year="{{ c.year }}"
+                                                    data-sem="{{ c.semester }}"
+                                                    data-current="{{ c.lecturer.name if c.lecturer else '' }}">
+                                                {{ c.code }} — {{ c.name }} (Yr {{ c.year }})
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="course-preview" id="course-preview"></div>
+                            </div>
+
+                            <div class="field">
+                                <label class="f-label">Lecturer</label>
+                                <div class="input-wrap">
+                                    <span class="ii"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                                    <select name="lecturer_id" required>
+                                        <option value="" disabled selected>Select a lecturer</option>
+                                        {% for l in lecturers %}
+                                        <option value="{{ l.id }}">{{ l.name }} — {{ l.email }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {% if not lecturers %}
+                            <div style="padding:12px;border-radius:10px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);font-size:12px;color:var(--amber);margin-bottom:14px">
+                                ⚠ No lecturers registered yet. Ask lecturers to create accounts at <strong>/register</strong> using a @jkuat.ac.ke email.
+                            </div>
+                            {% endif %}
+
+                            <button type="submit" class="btn violet full" {% if not lecturers or not courses %}disabled{% endif %}>
+                                🔗 &nbsp;Assign Lecturer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <div class="panel-title">Unassigned Courses</div>
+                            <div class="panel-sub">These courses need a lecturer assigned</div>
+                        </div>
+                        <span class="badge {{ 'rose' if unassigned_courses > 0 else 'green' }}">{{ unassigned_courses }} pending</span>
+                    </div>
+                    <div class="table-wrap" style="max-height:420px">
+                        {% set unassigned = courses | rejectattr('lecturer_id') | list %}
+                        {% if unassigned %}
+                        <table>
+                            <thead><tr><th>Code</th><th>Course</th><th>Programme</th><th>Yr</th></tr></thead>
+                            <tbody>
+                            {% for c in unassigned %}
+                            <tr style="cursor:pointer" onclick="prefillCourse({{ c.id }})" title="Click to prefill">
+                                <td class="td-mono" style="color:var(--cyan);font-weight:700">{{ c.code }}</td>
+                                <td style="font-size:12px">{{ c.name }}</td>
+                                <td><span class="badge violet">{{ c.programme.code }}</span></td>
+                                <td class="td-mono">{{ c.year }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="empty-state"><div>✅</div>All courses have been assigned!</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ SECTION: SEED ══ -->
+        <div class="section" id="section-seed">
+            <div class="sec-header">
+                <h2>Seed Utilities</h2>
+                <p>Run each seed once to populate the database with JKUAT's standard data. Seeds are idempotent — running them twice won't duplicate data.</p>
+            </div>
+
+            <div class="three-col">
+                <div class="seed-card">
+                    <div class="seed-card-top">
+                        <div class="seed-icon blue">🏛️</div>
+                        <div>
+                            <div class="seed-card-title">Seed Rooms</div>
+                            <div class="seed-card-desc">Populates 13 standard JKUAT venues — lecture halls (LT1–LT6), computer labs (Lab 1–4), and seminar rooms (SR1–SR3).</div>
+                        </div>
+                    </div>
+                    <div class="seed-status {{ 'done' if rooms|length > 0 else 'pending' }}">
+                        <div class="seed-dot {{ 'done' if rooms|length > 0 else 'pending' }}"></div>
+                        {{ rooms|length }} rooms in database
+                    </div>
+                    <a href="/admin/seed-rooms" class="btn blue full">Seed Rooms</a>
+                </div>
+
+                <div class="seed-card">
+                    <div class="seed-card-top">
+                        <div class="seed-icon teal">🏫</div>
+                        <div>
+                            <div class="seed-card-title">Seed Schools &amp; Programmes</div>
+                            <div class="seed-card-desc">Seeds 5 schools (SCIT, ENG, SHS, BUS, AGR) and 15 programmes including BIT, BBIT, DIT, BCE, MBChB, BCOM and more.</div>
+                        </div>
+                    </div>
+                    <div class="seed-status {{ 'done' if schools|length > 0 else 'pending' }}">
+                        <div class="seed-dot {{ 'done' if schools|length > 0 else 'pending' }}"></div>
+                        {{ schools|length }} schools in database
+                    </div>
+                    <a href="/admin/seed-schools" class="btn teal full">Seed Schools</a>
+                </div>
+
+                <div class="seed-card">
+                    <div class="seed-card-top">
+                        <div class="seed-icon amber">📚</div>
+                        <div>
+                            <div class="seed-card-title">Seed Sample Courses</div>
+                            <div class="seed-card-desc">Seeds 21 starter courses for BIT (Years 1–4), BBIT (Year 1), and DIT (Year 1). More programmes can be added in scheduler.py.</div>
+                        </div>
+                    </div>
+                    <div class="seed-status {{ 'done' if courses|length > 0 else 'pending' }}">
+                        <div class="seed-dot {{ 'done' if courses|length > 0 else 'pending' }}"></div>
+                        {{ courses|length }} courses in database
+                    </div>
+                    <a href="/admin/seed-courses" class="btn amber full">🌱 &nbsp;Seed Courses</a>
+                </div>
+            </div>
+
+            <div style="margin-top:24px;padding:20px 22px;background:var(--surface);border:1px solid var(--border);border-radius:18px">
+                <div class="run-all-row" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
+                    <div>
+                        <div style="font-size:14px;font-weight:700;margin-bottom:4px">⚡ Run All Seeds in Order</div>
+                        <div style="font-size:12px;color:var(--muted)">Click each button in order: Rooms → Schools → Courses. Each seed only runs once and skips if already populated.</div>
+                    </div>
+                    <div class="run-all-btns" style="display:flex;gap:10px;flex-wrap:wrap">
+                        <a href="/admin/seed-rooms"   class="btn blue">🏛️ Rooms</a>
+                        <a href="/admin/seed-schools" class="btn teal">🏫 Schools</a>
+                        <a href="/admin/seed-courses" class="btn amber">📚 Courses</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+    // ── Clock ──
+    function tick() {
+        document.getElementById('topbar-time').textContent =
+            new Date().toLocaleTimeString('en-KE', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
+    tick(); setInterval(tick, 1000);
+
+    // ── Sidebar badge counts ──
+    document.getElementById('sb-rooms-badge').textContent   = '{{ rooms|length }}';
+    document.getElementById('sb-schools-badge').textContent = '{{ schools|length }}';
+    document.getElementById('sb-courses-badge').textContent = '{{ courses|length }}';
+    document.querySelectorAll('.sb-badge').forEach(b => {
+        b.classList.add(parseInt(b.textContent) > 0 ? 'ok' : 'warn');
+    });
+
+    // ── Mobile sidebar ──
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebar-overlay');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    // ── Section switcher ──
+    const labels = {
+        overview: 'System Overview',
+        rooms:    'Room Management',
+        schools:  'Schools & Programmes',
+        courses:  'Course Management',
+        assign:   'Assign Lecturers',
+        seed:     'Seed Utilities',
+    };
+
+    function showSection(id, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById('section-' + id).classList.add('active');
+        document.querySelectorAll('.sb-link').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.getElementById('page-label').textContent = labels[id];
+        // Close mobile sidebar after navigation
+        closeSidebar();
+        window.scrollTo(0, 0);
+    }
+
+    // ── Course selection preview ──
+    function onCourseSelect(sel) {
+        const opt = sel.options[sel.selectedIndex];
+        const p   = document.getElementById('course-preview');
+        const cur = opt.dataset.current;
+        p.innerHTML = `<strong>${opt.dataset.code} — ${opt.dataset.name}</strong><br>
+            Programme: ${opt.dataset.prog} · Year ${opt.dataset.year} · Semester ${opt.dataset.sem}<br>
+            Currently assigned to: <strong>${cur || 'Nobody'}</strong>`;
+        p.classList.add('show');
+    }
+
+    // ── Click unassigned row → prefill ──
+    function prefillCourse(courseId) {
+        const sel = document.querySelector('[name="course_id"]');
+        if (sel) { sel.value = courseId; onCourseSelect(sel); }
+    }
+
+    // ── Table search ──
+    function filterTable(tableId, q) {
+        const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+        const lq   = q.toLowerCase();
+        rows.forEach(r => r.style.display = r.textContent.toLowerCase().includes(lq) ? '' : 'none');
+    }
+
+    // ── Course table programme filter ──
+    function filterCourseTable(prog) {
+        document.querySelectorAll('#courses-table tbody tr').forEach(r => {
+            r.style.display = (!prog || r.dataset.prog === prog) ? '' : 'none';
+        });
+    }
+
+    // ── Auto-show section from URL hash ──
+    const hash = location.hash.replace('#', '');
+    if (hash && labels[hash]) {
+        const btn = document.querySelector(`[onclick*="'${hash}'"]`);
+        showSection(hash, btn);
+    }
+
+    // ── Close sidebar on Escape ──
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeSidebar();
+    });
+</script>
+</body>
+</html>

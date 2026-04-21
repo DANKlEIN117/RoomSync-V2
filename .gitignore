@@ -1,0 +1,35 @@
+# Virtual environment
+venv/
+.env/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Flask instance / config
+instance/
+
+# Database
+*.db
+*.sqlite3
+
+# Migrations cache (keep migrations folder, ignore compiled files)
+migrations/__pycache__/
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Environment variables
+.env
+.env.*
