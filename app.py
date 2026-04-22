@@ -78,6 +78,17 @@ db.init_app(app)
 migrate = Migrate(app, db)
 _cache.init_cache(os.getenv("REDIS_URL"))
 
+
+from flask_mail import Mail
+
+app.config["MAIL_SERVER"]   = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+app.config["MAIL_PORT"]     = int(os.getenv("MAIL_PORT", 587))
+app.config["MAIL_USE_TLS"]  = os.getenv("MAIL_USE_TLS", "true").lower() == "true"
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+
+mail = Mail(app)
+
 # ---------------------------------------------------------------------------
 # Auth
 # ---------------------------------------------------------------------------
@@ -246,12 +257,16 @@ def student_dashboard():
         .paginate(page=notif_page, per_page=PAGE_SIZE_NOTIFICATIONS, error_out=False)
     )
 
+    # Pass the real enrolled course count (len of the cached ID list, not page items)
+    enrolled_count = len(enrolled_ids)
+
     return render_template(
         "student_dashboard.html",
         user=current_user,
         lectures_pag=lectures_pag,
         notifications_pag=notifications_pag,
         unread=current_user.unread_count(),
+        enrolled_count=enrolled_count,
     )
 
 
@@ -378,18 +393,42 @@ def lecturer_dashboard():
         .paginate(page=page, per_page=PAGE_SIZE_LECTURES, error_out=False)
     )
 
+    # Flat list used by stat cards (total counts) and weekly load bar chart.
+    # Fetched without joinedload since we only need ids/day — cheap.
+    all_lectures = (
+        Lecture.query
+        .options(joinedload(Lecture.room), joinedload(Lecture.course))
+        .filter_by(lecturer_id=current_user.id)
+        .order_by(Lecture.day, Lecture.start_time)
+        .all()
+    )
+
     courses = (
         Course.query
+        .options(joinedload(Course.enrollments))
         .filter_by(lecturer_id=current_user.id)
         .order_by(Course.programme_id, Course.year, Course.code)
         .all()
     )
 
+    # Lecturer notifications
+    notif_page = request.args.get("notif_page", 1, type=int)
+    notifications_pag = (
+        Notification.query
+        .filter_by(user_id=current_user.id)
+        .order_by(Notification.created_at.desc())
+        .paginate(page=notif_page, per_page=PAGE_SIZE_NOTIFICATIONS, error_out=False)
+    )
+    unread = current_user.unread_count()
+
     return render_template(
         "lecturer_dashboard.html",
         user=current_user,
         lectures_pag=lectures_pag,
+        lectures=all_lectures,
         courses=courses,
+        notifications_pag=notifications_pag,
+        unread=unread,
     )
 
 
@@ -572,15 +611,20 @@ def admin_dashboard():
         .order_by(Lecture.id.desc())
         .paginate(page=lect_page, per_page=PAGE_SIZE_ADMIN_LECTURES, error_out=False)
     )
+    # Flat list for template (admin_dashboard uses `recent_lectures` directly)
+    recent_lectures = recent_lectures_pag.items
+    students        = students_pag.items
 
     return render_template(
         "admin_dashboard.html",
         rooms=rooms, schools=schools, programmes=programmes,
         courses=courses, lecturers=lecturers,
+        students=students,
         students_pag=students_pag,
         total_lectures=total_lectures,
         assigned_courses=assigned_courses,
         unassigned_courses=unassigned_courses,
+        recent_lectures=recent_lectures,
         recent_lectures_pag=recent_lectures_pag,
     )
 

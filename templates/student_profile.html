@@ -19,13 +19,9 @@
         body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
             background:radial-gradient(ellipse 55% 45% at 75% 15%,rgba(37,99,255,.11) 0%,transparent 60%),
                        radial-gradient(ellipse 40% 35% at 20% 85%,rgba(0,229,195,.08) 0%,transparent 55%);}
+        @media(max-width:768px){html,body{height:auto;overflow:auto;}body{overflow-x:hidden;}}
 
-        @media(max-width:768px){
-            html,body{height:auto;overflow:auto;}
-            body{overflow-x:hidden;}
-        }
-
-        /* ── Sidebar ── */
+        /* Sidebar */
         .sidebar{width:240px;min-width:240px;height:100vh;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative;z-index:10;}
         .sidebar-brand{padding:28px 24px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
         .sidebar-brand img{width:36px;height:36px;object-fit:contain;}
@@ -47,25 +43,21 @@
         .logout-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:13px;color:var(--muted);text-decoration:none;transition:.18s;}
         .logout-link:hover{background:rgba(244,63,94,.08);color:var(--rose);}
 
-        /* ── Main ── */
+        /* Main */
         .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1;}
         .topbar{padding:0 36px;height:72px;min-height:72px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(8,13,26,.6);backdrop-filter:blur(14px);flex-shrink:0;}
         .topbar-left h1{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;}
         .topbar-left p{font-size:12px;color:var(--muted);margin-top:2px;}
-        .topbar-right{display:flex;align-items:center;gap:12px;}
-
-        /* hamburger */
         .menu-btn{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--glass);align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:.18s;flex-shrink:0;}
         .menu-btn:hover{background:rgba(255,255,255,.07);color:var(--text);}
-
         .content{flex:1;overflow-y:auto;padding:32px 36px 48px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.07) transparent;}
         .content::-webkit-scrollbar{width:4px;}
         .content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:99px;}
 
-        /* ── Layout ── */
+        /* Layout */
         .profile-grid{display:grid;grid-template-columns:300px 1fr;gap:24px;}
 
-        /* ── Profile card ── */
+        /* Profile card */
         .profile-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;animation:fadeUp .5s .1s both;align-self:start;}
         .profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;margin:0 auto 16px;box-shadow:0 0 24px rgba(37,99,255,.35);}
         .profile-name{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px;}
@@ -74,7 +66,6 @@
         .profile-stat:last-of-type{border-bottom:none;}
         .profile-stat span:first-child{color:var(--muted);}
         .profile-stat span:last-child{font-weight:600;color:var(--accent2);}
-
         .enrolled-section{margin-top:20px;padding-top:18px;border-top:1px solid var(--border);}
         .enrolled-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
         .enrolled-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);gap:8px;}
@@ -85,21 +76,23 @@
         .unenroll-btn:hover{color:var(--rose);background:rgba(244,63,94,.1);}
         .empty-enrolled{font-size:12px;color:var(--muted);text-align:center;padding:16px 0;line-height:1.6;}
 
-        /* ── Course browser ── */
+        /* Pagination */
+        .pagination{display:flex;gap:8px;margin-top:14px;justify-content:center;flex-wrap:wrap;}
+        .page-btn{padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:var(--glass);color:var(--muted);font-size:12px;text-decoration:none;transition:.18s;}
+        .page-btn:hover,.page-btn.active{background:rgba(37,99,255,.18);color:var(--text);border-color:rgba(37,99,255,.35);}
+
+        /* Course browser */
         .browser-panel{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;animation:fadeUp .5s .2s both;}
         .browser-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
         .browser-sub{font-size:12px;color:var(--muted);margin-top:2px;margin-bottom:20px;}
-
         .filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
         .filter-select{padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;-webkit-appearance:none;appearance:none;flex:1;min-width:140px;cursor:pointer;}
         .filter-select:focus{border-color:rgba(37,99,255,.5);background:rgba(37,99,255,.07);}
         .filter-select option{background:var(--panel);}
-
         .filter-year{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
         .year-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--glass);color:var(--muted);font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:.18s;}
         .year-btn:hover{background:rgba(255,255,255,.06);color:var(--text);}
         .year-btn.active{background:rgba(37,99,255,.18);color:var(--text);border-color:rgba(37,99,255,.35);}
-
         .courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
         .course-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;transition:.2s;position:relative;overflow:hidden;}
         .course-card:hover{transform:translateY(-3px);border-color:rgba(37,99,255,.3);box-shadow:0 8px 28px rgba(0,0,0,.3);}
@@ -117,14 +110,12 @@
         .enroll-btn.not-enrolled{background:rgba(37,99,255,.15);color:var(--accent2);border:1px solid rgba(37,99,255,.25);}
         .enroll-btn.not-enrolled:hover{background:rgba(37,99,255,.28);transform:translateY(-1px);}
         .enroll-btn.is-enrolled{background:rgba(0,229,195,.1);color:var(--accent2);border:1px solid rgba(0,229,195,.2);cursor:default;}
-
         .courses-loading{text-align:center;padding:48px;color:var(--muted);font-size:13px;}
         .courses-dots{display:inline-flex;gap:6px;margin-top:12px;}
         .courses-dots span{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:bounce .8s infinite;}
         .courses-dots span:nth-child(2){animation-delay:.15s}.courses-dots span:nth-child(3){animation-delay:.3s}
         @keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.5}40%{transform:scale(1);opacity:1}}
         .courses-empty{text-align:center;padding:48px;color:var(--muted);font-size:13px;}
-
         .toast{position:fixed;bottom:28px;right:28px;padding:13px 20px;border-radius:12px;font-size:13px;font-weight:500;z-index:999;display:none;animation:slideUp .3s cubic-bezier(.22,1,.36,1);}
         .toast.success{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#4ade80;}
         .toast.error{background:rgba(244,63,94,.12);border:1px solid rgba(244,63,94,.3);color:#fb7185;}
@@ -132,13 +123,13 @@
         @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-        /* ── Mobile drawer overlay ── */
+        /* Drawer */
         .drawer-overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s;}
         .drawer-overlay.open{opacity:1;pointer-events:auto;}
         .drawer{position:fixed;top:0;left:0;bottom:0;width:280px;z-index:70;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .3s cubic-bezier(.22,1,.36,1);overflow-y:auto;}
         .drawer.open{transform:translateX(0);}
 
-        /* ── Mobile bottom nav ── */
+        /* Mobile nav */
         .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--panel);border-top:1px solid var(--border);padding:10px 0 max(10px,env(safe-area-inset-bottom));}
         .mobile-nav-inner{display:flex;justify-content:space-around;align-items:center;}
         .mnav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:10px;cursor:pointer;text-decoration:none;color:var(--muted);font-size:10px;font-weight:500;transition:color .18s;flex:1;max-width:72px;}
@@ -146,67 +137,30 @@
         .mnav-item.active{color:var(--accent2);}
         .mnav-item.active svg{opacity:1;color:var(--accent2);}
 
-        /* ── Breakpoints ── */
-        @media(max-width:1100px){
-            .profile-grid{grid-template-columns:1fr;}
-            .courses-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}
-        }
-        @media(max-width:900px){
-            .content{padding:24px 24px 40px;}
-            .topbar{padding:0 24px;}
-        }
+        @media(max-width:1100px){.profile-grid{grid-template-columns:1fr;}.courses-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}}
+        @media(max-width:900px){.content{padding:24px 24px 40px;}.topbar{padding:0 24px;}}
         @media(max-width:768px){
             body{overflow-x:hidden;}
             .sidebar{display:none;}
             .main{height:auto;min-height:100vh;overflow:visible;}
-
             .topbar{position:sticky;top:0;z-index:10;padding:0 16px;height:60px;min-height:60px;}
-            .topbar-left h1{font-size:1rem;}
-            .topbar-left p{display:none;}
+            .topbar-left h1{font-size:1rem;}.topbar-left p{display:none;}
             .menu-btn{display:flex;}
-
             .content{flex:none;overflow-y:visible;padding:16px 16px 100px;}
-
             .profile-grid{grid-template-columns:1fr;gap:16px;}
-
-            /* On mobile show profile card compactly */
             .profile-card{padding:20px;}
-            .profile-avatar{width:60px;height:60px;font-size:22px;}
-
             .browser-panel{padding:18px 16px;}
-
-            /* Stack filter selects */
             .filter-bar{flex-direction:column;gap:8px;}
             .filter-select{min-width:unset;width:100%;}
-
-            /* Smaller year buttons */
-            .year-btn{padding:6px 10px;font-size:11px;}
-
-            /* Single column course cards */
             .courses-grid{grid-template-columns:1fr;}
-
             .mobile-nav{display:block;}
-
-            /* Toast at bottom above nav */
             .toast{bottom:80px;right:16px;left:16px;text-align:center;}
-
-            .topbar{
-                padding-left:max(16px,env(safe-area-inset-left));
-                padding-right:max(16px,env(safe-area-inset-right));
-            }
-        }
-        @media(max-width:380px){
-            .filter-year{gap:4px;}
-            .year-btn{padding:5px 8px;font-size:10px;}
         }
     </style>
 </head>
 <body>
 
-<!-- ── Mobile drawer overlay ── -->
 <div class="drawer-overlay" id="drawer-overlay"></div>
-
-<!-- ── Mobile drawer ── -->
 <div class="drawer" id="drawer">
     <div class="sidebar-brand">
         <img src="{{ url_for('static', filename='images/jkuat-logo.png') }}" alt="JKUAT">
@@ -225,33 +179,18 @@
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             Dashboard
         </a>
-        <a href="/student" class="nav-link">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            My Timetable
-        </a>
         <a href="/profile" class="nav-link active">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             My Profile
         </a>
-        <div class="nav-label" style="margin-top:8px">Account</div>
-        <a href="#" class="nav-link">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 5 18.36"/></svg>
-            Settings
-        </a>
-        <a href="/logout" class="nav-link" style="color:var(--muted);">
+        <a href="/logout" class="nav-link">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Sign Out
         </a>
     </nav>
-    <div class="sidebar-bottom">
-        <a href="/logout" class="logout-link">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Sign Out
-        </a>
-    </div>
 </div>
 
-<!-- ── Desktop Sidebar ── -->
+<!-- Desktop Sidebar -->
 <aside class="sidebar">
     <div class="sidebar-brand">
         <img src="{{ url_for('static', filename='images/jkuat-logo.png') }}" alt="JKUAT">
@@ -270,18 +209,14 @@
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             Dashboard
         </a>
-        <a href="/student" class="nav-link">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            My Timetable
-        </a>
         <a href="/profile" class="nav-link active">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             My Profile
         </a>
         <div class="nav-label" style="margin-top:8px">Account</div>
-        <a href="#" class="nav-link">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 5 18.36"/></svg>
-            Settings
+        <a href="/logout" class="nav-link">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
         </a>
     </nav>
     <div class="sidebar-bottom">
@@ -292,7 +227,7 @@
     </div>
 </aside>
 
-<!-- ── Main ── -->
+<!-- Main -->
 <div class="main">
     <header class="topbar">
         <div style="display:flex;align-items:center;gap:12px;">
@@ -300,13 +235,30 @@
                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
             <div class="topbar-left">
-                <h1>My Profile & Courses</h1>
+                <h1>My Profile &amp; Courses</h1>
                 <p>Browse courses by school and programme — enroll to receive lecture notifications.</p>
             </div>
         </div>
     </header>
 
     <div class="content">
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div style="margin-bottom:20px">
+            {% for category, message in messages %}
+            <div style="padding:12px 16px;border-radius:10px;margin-bottom:8px;font-size:13px;
+                background:{% if category=='error' %}rgba(244,63,94,.1){% else %}rgba(0,229,195,.1){% endif %};
+                border:1px solid {% if category=='error' %}rgba(244,63,94,.3){% else %}rgba(0,229,195,.3){% endif %};
+                color:{% if category=='error' %}#fb7185{% else %}var(--accent2){% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
         <div class="profile-grid">
 
             <!-- Left: profile + enrollments -->
@@ -317,14 +269,18 @@
                     <div class="profile-email">{{ user.email }}</div>
 
                     <div class="profile-stat"><span>Role</span><span>Student</span></div>
-                    <div class="profile-stat"><span>Courses Enrolled</span><span id="enroll-count">{{ enrollments|length }}</span></div>
+                    {# enrollments_pag.total gives the real total across all pages #}
+                    <div class="profile-stat">
+                        <span>Courses Enrolled</span>
+                        <span id="enroll-count">{{ enrollments_pag.total if enrollments_pag else 0 }}</span>
+                    </div>
                     <div class="profile-stat"><span>Member Since</span><span>2025</span></div>
 
                     <div class="enrolled-section">
                         <div class="enrolled-title">Enrolled Courses</div>
                         <div id="enrolled-list">
-                            {% if enrollments %}
-                                {% for e in enrollments %}
+                            {% if enrollments_pag and enrollments_pag.items %}
+                                {% for e in enrollments_pag.items %}
                                 <div class="enrolled-item" id="ei-{{ e.course_id }}">
                                     <span class="enrolled-code">{{ e.course.code }}</span>
                                     <span class="enrolled-name">{{ e.course.name }}</span>
@@ -337,6 +293,19 @@
                                 <div class="empty-enrolled" id="empty-enrolled-msg">No courses yet. Browse and enroll below →</div>
                             {% endif %}
                         </div>
+
+                        {# Pagination for enrolled list #}
+                        {% if enrollments_pag and enrollments_pag.pages > 1 %}
+                        <div class="pagination" style="margin-top:12px">
+                            {% if enrollments_pag.has_prev %}
+                            <a href="?page={{ enrollments_pag.prev_num }}" class="page-btn">← Prev</a>
+                            {% endif %}
+                            <span class="page-btn active">{{ enrollments_pag.page }} / {{ enrollments_pag.pages }}</span>
+                            {% if enrollments_pag.has_next %}
+                            <a href="?page={{ enrollments_pag.next_num }}" class="page-btn">Next →</a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -375,7 +344,7 @@
     </div>
 </div>
 
-<!-- ── Mobile bottom nav ── -->
+<!-- Mobile bottom nav -->
 <nav class="mobile-nav">
     <div class="mobile-nav-inner">
         <a href="/student" class="mnav-item">
@@ -400,10 +369,11 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    // Enrolled set
+    /* Enrolled set — built from what the server already knows about this student.
+       This is the source of truth for the enroll/unenroll buttons on the course cards. */
     const enrolled = new Set({{ enrolled | list | tojson }});
 
-    // Schools → programmes map
+    /* Schools → programmes map (baked in at render time so no extra API call needed) */
     const schoolProgs = {
         {% for school in schools %}
         "{{ school.id }}": [
@@ -414,7 +384,7 @@
         {% endfor %}
     };
 
-    // Avatar initials
+    /* Avatar initials */
     (function(){
         const np = "{{ user.name }}".trim().split(' ');
         const ini = (np.length>=2 ? np[0][0]+np[np.length-1][0] : np[0].slice(0,2)).toUpperCase();
@@ -424,7 +394,7 @@
         });
     })();
 
-    // School dropdown
+    /* School → populate programme dropdown */
     function onSchoolChange(sel) {
         const progSel = document.getElementById('prog-select');
         progSel.innerHTML = '<option value="">— Select Programme —</option>';
@@ -438,7 +408,7 @@
         progSel.disabled = false;
     }
 
-    // Programme dropdown
+    /* Programme → fetch courses from API */
     async function onProgChange(sel) {
         if (!sel.value) return;
         document.getElementById('year-filter').style.display = 'none';
@@ -487,30 +457,36 @@
         renderCourses(currentCourses, year);
     }
 
+    /* Enroll */
     async function enroll(courseId, btn) {
-        btn.disabled = true; btn.textContent = 'Enrolling…';
+        btn.disabled = true;
+        btn.textContent = 'Enrolling…';
         try {
             const res  = await fetch('/enroll/'+courseId, {method:'POST'});
             const data = await res.json();
             if (data.ok) {
                 enrolled.add(courseId);
                 const card = document.getElementById('cc-'+courseId);
-                card.classList.add('enrolled-card');
+                if (card) card.classList.add('enrolled-card');
                 btn.className = 'enroll-btn is-enrolled';
+                btn.disabled  = true;
                 btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Enrolled';
                 addToSidebarList(courseId);
                 updateCount(1);
                 showToast(data.message, 'success');
             } else {
                 showToast(data.message, 'error');
-                btn.disabled = false; btn.textContent = '+ Enroll';
+                btn.disabled = false;
+                btn.textContent = '+ Enroll';
             }
         } catch(e) {
             showToast('Enrollment failed. Try again.', 'error');
-            btn.disabled = false; btn.textContent = '+ Enroll';
+            btn.disabled = false;
+            btn.textContent = '+ Enroll';
         }
     }
 
+    /* Unenroll */
     async function unenroll(courseId, btn) {
         if (!confirm('Unenroll from this course?')) return;
         try {
@@ -524,68 +500,78 @@
                 if (card) {
                     card.classList.remove('enrolled-card');
                     const ebtn = document.getElementById('btn-'+courseId);
-                    if (ebtn){ ebtn.className='enroll-btn not-enrolled';ebtn.disabled=false;ebtn.textContent='+ Enroll';ebtn.setAttribute('onclick','enroll('+courseId+', this)'); }
+                    if (ebtn){
+                        ebtn.className = 'enroll-btn not-enrolled';
+                        ebtn.disabled  = false;
+                        ebtn.textContent = '+ Enroll';
+                        ebtn.setAttribute('onclick','enroll('+courseId+', this)');
+                    }
                 }
                 updateCount(-1);
-                if (enrolled.size === 0) {
-                    document.getElementById('enrolled-list').innerHTML = '<div class="empty-enrolled" id="empty-enrolled-msg">No courses yet. Browse and enroll below →</div>';
+                /* Show empty message if no enrollments left in the sidebar list */
+                const list = document.getElementById('enrolled-list');
+                if (list && !list.querySelector('.enrolled-item')) {
+                    list.innerHTML = '<div class="empty-enrolled" id="empty-enrolled-msg">No courses yet. Browse and enroll below →</div>';
                 }
                 showToast('Unenrolled successfully.', 'success');
             }
         } catch(e){ showToast('Failed to unenroll.', 'error'); }
     }
 
+    /* Add newly enrolled course to the sidebar list immediately (no reload needed) */
     function addToSidebarList(courseId) {
         const emptyMsg = document.getElementById('empty-enrolled-msg');
         if (emptyMsg) emptyMsg.remove();
-        const c = currentCourses.find(function(x){ return x.id===courseId; });
+        const c = currentCourses.find(function(x){ return x.id === courseId; });
         if (!c) return;
         const list = document.getElementById('enrolled-list');
-        const div  = document.createElement('div');
-        div.className = 'enrolled-item'; div.id = 'ei-'+courseId;
+        if (!list) return;
+        /* Don't add duplicate */
+        if (document.getElementById('ei-'+courseId)) return;
+        const div = document.createElement('div');
+        div.className = 'enrolled-item';
+        div.id = 'ei-'+courseId;
         div.innerHTML = '<span class="enrolled-code">'+c.code+'</span>'
             + '<span class="enrolled-name">'+c.name+'</span>'
             + '<button class="unenroll-btn" onclick="unenroll('+courseId+', this)" title="Unenroll">'
-            + '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+            + '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">'
+            + '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
         list.appendChild(div);
     }
 
     function updateCount(delta) {
         const el = document.getElementById('enroll-count');
-        el.textContent = parseInt(el.textContent) + delta;
+        if (el) el.textContent = Math.max(0, parseInt(el.textContent||'0') + delta);
     }
 
     function showToast(msg, type) {
         const t = document.getElementById('toast');
-        t.textContent = msg; t.className = 'toast '+type+' show';
+        t.textContent = msg;
+        t.className = 'toast '+type+' show';
         setTimeout(function(){ t.classList.remove('show'); }, 3500);
     }
 
-    /* ── Drawer ── */
+    /* Drawer */
     var _drawerReady = false;
-
     function openDrawer(e) {
-        if (e) e.stopPropagation();
+        if(e) e.stopPropagation();
         document.getElementById('drawer').classList.add('open');
         document.getElementById('drawer-overlay').classList.add('open');
         document.body.style.overflow = 'hidden';
         _drawerReady = false;
         setTimeout(function(){ _drawerReady = true; }, 300);
     }
-
     function closeDrawer() {
         document.getElementById('drawer').classList.remove('open');
         document.getElementById('drawer-overlay').classList.remove('open');
         document.body.style.overflow = '';
         _drawerReady = false;
     }
-
     document.getElementById('drawer-overlay').addEventListener('click', function(e){
-        if (_drawerReady && e.target === this) closeDrawer();
+        if(_drawerReady && e.target===this) closeDrawer();
     });
-
     document.addEventListener('keydown', function(e){
-        if (e.key === 'Escape') closeDrawer();
+        if(e.key==='Escape') closeDrawer();
     });
 </script>
 </body>
