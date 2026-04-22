@@ -62,7 +62,9 @@ app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
 
 _db_url = os.getenv("DATABASE_URL", "sqlite:///db.sqlite3")
 if _db_url.startswith("postgres://"):
-    _db_url = _db_url.replace("postgres://", "postgresql://", 1)
+    _db_url = _db_url.replace("postgres://", "postgresql+psycopg://", 1)
+elif _db_url.startswith("postgresql://"):
+    _db_url = _db_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = _db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
