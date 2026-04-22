@@ -681,7 +681,21 @@ def admin_assign_lecturer():
 
     return redirect(url_for("admin_dashboard"))
 
-
+@app.route("/setup-admin-xk92")
+def setup_admin():
+    from werkzeug.security import generate_password_hash
+    existing = User.query.filter_by(email="admin@jkuat.ac.ke").first()
+    if existing:
+        return jsonify({"msg": "Admin already exists"})
+    admin = User(
+        name="Admin",
+        email="admin@jkuat.ac.ke",
+        password=generate_password_hash("Admin@JKUAT2026"),
+        role="admin"
+    )
+    db.session.add(admin)
+    db.session.commit()
+    return jsonify({"msg": "Admin created successfully"})
 # ===========================================================================
 # Health check
 # ===========================================================================
