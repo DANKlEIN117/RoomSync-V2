@@ -63,13 +63,17 @@ celery_app.conf.update(
 # ---------------------------------------------------------------------------
 def _get_flask_app():
     """
-    Lazy-import the Flask app to avoid circular imports.
-    The sys.path guard at module level ensures 'app' is always resolvable,
-    regardless of where the Celery worker was started from.
+    Load Flask app by absolute file path — works regardless of cwd,
+    sys.path, or how the Celery worker process was launched.
     """
-    from app import app as flask_app
-    return flask_app
-
+    import importlib.util
+    if "app" not in sys.modules:
+        _app_path = os.path.join(_PROJECT_ROOT, "app.py")
+        spec = importlib.util.spec_from_file_location("app", _app_path)
+        mod  = importlib.util.module_from_spec(spec)
+        sys.modules["app"] = mod
+        spec.loader.exec_module(mod)
+    return sys.modules["app"].app
 
 # ---------------------------------------------------------------------------
 # TASK 1 — In-app notification fan-out
