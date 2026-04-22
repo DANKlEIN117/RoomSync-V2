@@ -61,7 +61,9 @@ services:
   - type: redis
     name: jkuat-redis
     plan: free
+    ipAllowList: []
 
 databases:
   - name: jkuat-db
     plan: free
+
