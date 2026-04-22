@@ -67,6 +67,9 @@ def _get_flask_app():
     sys.path, or how the Celery worker process was launched.
     """
     import importlib.util
+    # Ensure all sibling modules (models, scheduler, cache) are importable
+    if _PROJECT_ROOT not in sys.path:
+        sys.path.insert(0, _PROJECT_ROOT)
     if "app" not in sys.modules:
         _app_path = os.path.join(_PROJECT_ROOT, "app.py")
         spec = importlib.util.spec_from_file_location("app", _app_path)
@@ -74,7 +77,6 @@ def _get_flask_app():
         sys.modules["app"] = mod
         spec.loader.exec_module(mod)
     return sys.modules["app"].app
-
 # ---------------------------------------------------------------------------
 # TASK 1 — In-app notification fan-out
 # ---------------------------------------------------------------------------
