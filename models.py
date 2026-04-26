@@ -17,9 +17,8 @@ class User(UserMixin, db.Model):
     name     = db.Column(db.String(120), nullable=False)
     email    = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
-    role     = db.Column(db.String(20),  nullable=False)  # "student" | "lecturer" | "admin"
+    role     = db.Column(db.String(20),  nullable=False)
 
-    # A lecturer's lectures (foreign_keys needed because Lecture also has room/course FKs)
     lectures       = db.relationship('Lecture',      backref='lecturer',
                                      foreign_keys='Lecture.lecturer_id', lazy=True)
     enrollments    = db.relationship('Enrollment',   backref='student',  lazy=True)
@@ -83,7 +82,6 @@ class Course(db.Model):
     programme_id = db.Column(db.Integer, db.ForeignKey('programme.id'), nullable=False)
     lecturer_id  = db.Column(db.Integer, db.ForeignKey('user.id'),      nullable=True)
 
-    # backref='course' used by joinedload(Lecture.course) in app.py
     lectures    = db.relationship('Lecture',    backref='course', lazy=True)
     enrollments = db.relationship('Enrollment', backref='course', lazy=True)
 
@@ -108,8 +106,6 @@ class Room(db.Model):
     building  = db.Column(db.String(60),  nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
-    # backref='room' so joinedload(Lecture.room) works in app.py
-    # (was 'room_ref' before — that was the bug)
     lectures  = db.relationship('Lecture', backref='room', lazy=True)
 
     def to_dict(self):
@@ -140,13 +136,14 @@ class Lecture(db.Model):
     end_time   = db.Column(db.Time, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Optional per-lecture communication fields
+    class_message = db.Column(db.Text,          nullable=True)   # prep notes / expectations
+    online_link   = db.Column(db.String(512),   nullable=True)   # Zoom / Meet URL
+
     lecturer_id = db.Column(db.Integer, db.ForeignKey('user.id'),   nullable=False)
     room_id     = db.Column(db.Integer, db.ForeignKey('room.id'),   nullable=False)
     course_id   = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
 
-    # 'room' and 'course' backrefs are defined on Room and Course above.
-    # 'lecturer' backref is defined on User above.
-    # Only notifications lives here to avoid conflicts.
     notifications = db.relationship('Notification', backref='lecture', lazy=True)
 
     def __repr__(self):

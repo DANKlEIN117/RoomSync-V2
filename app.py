@@ -1,27 +1,3 @@
-"""
-JKUAT Lecture Scheduler — Production-Ready Flask App  (v2)
-==========================================================
-Changes from v1:
-  - Notification fan-out moved entirely to Celery (tasks.py)
-  - Stampede-safe cache via XFetch / Probabilistic Early Recomputation (cache.py)
-  - Per-user enrollment cache with explicit invalidation on enroll/unenroll
-  - Distributed Redis lock on room booking to close the race-condition window
-  - Bulk-delete of notifications delegated to a Celery task on lecture delete
-  - DB connection pool tuned for Gunicorn multi-worker deployment
-
-Run with Gunicorn:
-    gunicorn -c gunicorn.conf.py "app:app"
-
-Start Celery worker:
-    celery -A tasks worker -Q notifications,default --concurrency=4 --loglevel=info
-
-Required env vars:
-    DATABASE_URL            postgresql://user:pass@host:5432/dbname
-    REDIS_URL               redis://localhost:6379/0
-    CELERY_BROKER_URL       redis://localhost:6379/1
-    FLASK_SECRET_KEY        some-long-random-string
-"""
-
 from __future__ import annotations
 
 import logging
@@ -54,9 +30,8 @@ from scheduler import (check_lecturer_conflict, get_available_rooms,
                        seed_rooms, seed_sample_courses, seed_schools_and_programmes)
 import cache as _cache
 
-# ---------------------------------------------------------------------------
-# App factory
-# ---------------------------------------------------------------------------
+
+# ── App factory ───────────────────────────────────────────────────────────────
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
 
@@ -91,9 +66,8 @@ app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
 mail = Mail(app)
 
-# ---------------------------------------------------------------------------
-# Auth
-# ---------------------------------------------------------------------------
+
+# ── Auth ──────────────────────────────────────────────────────────────────────
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -105,18 +79,14 @@ def load_user(user_id: str):
     return db.session.get(User, int(user_id))
 
 
-# ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
+# ── Constants ─────────────────────────────────────────────────────────────────
 PAGE_SIZE_LECTURES       = 20
 PAGE_SIZE_NOTIFICATIONS  = 15
 PAGE_SIZE_ADMIN_STUDENTS = 50
 PAGE_SIZE_ADMIN_LECTURES = 30
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+# ── Helpers ───────────────────────────────────────────────────────────────────
 @app.before_request
 def refresh_session():
     if current_user.is_authenticated:
@@ -151,17 +121,13 @@ def _enrolled_ids_for(user_id: int):
     )
 
 
-# ===========================================================================
-# LANDING
-# ===========================================================================
+# ── LANDING ───────────────────────────────────────────────────────────────────
 @app.route("/")
 def landing():
     return render_template("landing.html")
 
 
-# ===========================================================================
-# AUTH
-# ===========================================================================
+# ── AUTH ──────────────────────────────────────────────────────────────────────
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -229,9 +195,7 @@ def logout():
     return redirect(url_for("login"))
 
 
-# ===========================================================================
-# STUDENT DASHBOARD
-# ===========================================================================
+# ── STUDENT DASHBOARD ─────────────────────────────────────────────────────────
 @app.route("/student")
 @login_required
 def student_dashboard():
@@ -259,7 +223,6 @@ def student_dashboard():
         .paginate(page=notif_page, per_page=PAGE_SIZE_NOTIFICATIONS, error_out=False)
     )
 
-    # Pass the real enrolled course count (len of the cached ID list, not page items)
     enrolled_count = len(enrolled_ids)
 
     return render_template(
@@ -272,9 +235,7 @@ def student_dashboard():
     )
 
 
-# ===========================================================================
-# NOTIFICATIONS — mark read
-# ===========================================================================
+# ── NOTIFICATIONS — mark read ─────────────────────────────────────────────────
 @app.route("/notifications/mark-read", methods=["POST"])
 @login_required
 def mark_notifications_read():
@@ -285,9 +246,7 @@ def mark_notifications_read():
     return jsonify({"ok": True})
 
 
-# ===========================================================================
-# STUDENT PROFILE
-# ===========================================================================
+# ── STUDENT PROFILE ───────────────────────────────────────────────────────────
 @app.route("/profile")
 @login_required
 def profile():
@@ -350,9 +309,7 @@ def unenroll(course_id: int):
     return jsonify({"ok": True, "message": "Unenrolled successfully."})
 
 
-# ===========================================================================
-# API — courses by programme  (stampede-safe)
-# ===========================================================================
+# ── API courses by programme ──────────────────────────────────────────────────
 @app.route("/api/courses/<int:programme_id>")
 @login_required
 def api_courses(programme_id: int):
@@ -377,9 +334,7 @@ def api_courses(programme_id: int):
     return jsonify(raw)
 
 
-# ===========================================================================
-# LECTURER DASHBOARD
-# ===========================================================================
+# ── LECTURER DASHBOARD ────────────────────────────────────────────────────────
 @app.route("/lecturer")
 @login_required
 def lecturer_dashboard():
@@ -395,8 +350,6 @@ def lecturer_dashboard():
         .paginate(page=page, per_page=PAGE_SIZE_LECTURES, error_out=False)
     )
 
-    # Flat list used by stat cards (total counts) and weekly load bar chart.
-    # Fetched without joinedload since we only need ids/day — cheap.
     all_lectures = (
         Lecture.query
         .options(joinedload(Lecture.room), joinedload(Lecture.course))
@@ -413,7 +366,6 @@ def lecturer_dashboard():
         .all()
     )
 
-    # Lecturer notifications
     notif_page = request.args.get("notif_page", 1, type=int)
     notifications_pag = (
         Notification.query
@@ -434,9 +386,7 @@ def lecturer_dashboard():
     )
 
 
-# ===========================================================================
-# ROOMS AVAILABLE — stampede-safe
-# ===========================================================================
+# ── ROOMS AVAILABLE — stampede-safe ──────────────────────────────────────────
 @app.route("/rooms/available", methods=["POST"])
 @login_required
 def available_rooms():
@@ -464,9 +414,7 @@ def available_rooms():
     return jsonify({"rooms": rooms})
 
 
-# ===========================================================================
-# CREATE LECTURE
-# ===========================================================================
+# ── CREATE LECTURE ────────────────────────────────────────────────────────────
 @app.route("/create-lecture", methods=["POST"])
 @login_required
 def create_lecture():
@@ -474,11 +422,13 @@ def create_lecture():
         flash("Access denied.", "error")
         return redirect(url_for("login"))
 
-    course_id = request.form.get("course_id", "").strip()
-    room_id   = request.form.get("room_id",   "").strip()
-    day       = request.form.get("day",       "").strip()
-    start_str = request.form.get("start_time","").strip()
-    end_str   = request.form.get("end_time",  "").strip()
+    course_id     = request.form.get("course_id",     "").strip()
+    room_id       = request.form.get("room_id",       "").strip()
+    day           = request.form.get("day",           "").strip()
+    start_str     = request.form.get("start_time",    "").strip()
+    end_str       = request.form.get("end_time",      "").strip()
+    class_message = request.form.get("class_message", "").strip() or None
+    online_link   = request.form.get("online_link",   "").strip() or None
 
     if not all([course_id, room_id, day, start_str, end_str]):
         flash("All fields are required.", "error")
@@ -506,7 +456,7 @@ def create_lecture():
         flash("You already have a lecture during this time slot.", "error")
         return redirect(url_for("lecturer_dashboard"))
 
-    # ── Distributed lock: atomic Redis SET NX prevents double-booking ─────────
+    # Distributed lock: atomic Redis SET NX prevents double-booking
     if not _cache.acquire_room_lock(day, start_str, end_str, room_id):
         flash("That room is being booked right now. Please try again in a moment.", "error")
         return redirect(url_for("lecturer_dashboard"))
@@ -519,9 +469,14 @@ def create_lecture():
             return redirect(url_for("lecturer_dashboard"))
 
         lecture = Lecture(
-            course_id=course_id, room_id=room_id,
-            day=day, start_time=start, end_time=end,
+            course_id=course_id,
+            room_id=room_id,
+            day=day,
+            start_time=start,
+            end_time=end,
             lecturer_id=current_user.id,
+            class_message=class_message,
+            online_link=online_link,
         )
         db.session.add(lecture)
         db.session.commit()
@@ -529,7 +484,7 @@ def create_lecture():
     finally:
         _cache.release_room_lock(day, start_str, end_str, room_id)
 
-    # ── Offload fan-out to Celery — response returns in ~5 ms ─────────────────
+    # Offload fan-out to Celery — response returns in ~5 ms
     from tasks import dispatch_lecture_notifications
     dispatch_lecture_notifications.delay(lecture.id)
 
@@ -544,9 +499,46 @@ def create_lecture():
     return redirect(url_for("lecturer_dashboard"))
 
 
-# ===========================================================================
-# DELETE LECTURE
-# ===========================================================================
+# ── UPDATE LECTURE MESSAGE ────────────────────────────────────────────────────
+@app.route("/update-lecture-message/<int:lecture_id>", methods=["POST"])
+@login_required
+def update_lecture_message(lecture_id: int):
+    """
+    AJAX endpoint called by the inline message editor on the dashboard.
+    Updates class_message and online_link for a single lecture.
+    Only the owning lecturer may update.
+    """
+    if current_user.role != "lecturer":
+        return jsonify({"error": "Forbidden"}), 403
+
+    lecture = db.session.get(Lecture, lecture_id)
+    if not lecture:
+        return jsonify({"error": "Lecture not found."}), 404
+
+    if lecture.lecturer_id != current_user.id:
+        return jsonify({"error": "You can only edit your own lectures."}), 403
+
+    class_message = request.form.get("class_message", "").strip() or None
+    online_link   = request.form.get("online_link",   "").strip() or None
+
+    # Basic URL sanity check — must start with http(s):// if provided
+    if online_link and not online_link.startswith(("http://", "https://")):
+        return jsonify({"error": "Online link must be a valid URL starting with http(s)://"}), 400
+
+    lecture.class_message = class_message
+    lecture.online_link   = online_link
+    db.session.commit()
+
+    logger.info(
+        "Lecture %d message updated by lecturer %d (has_msg=%s, has_link=%s)",
+        lecture_id, current_user.id,
+        bool(class_message), bool(online_link),
+    )
+
+    return jsonify({"ok": True})
+
+
+# ── DELETE LECTURE ────────────────────────────────────────────────────────────
 @app.route("/delete-lecture/<int:lecture_id>", methods=["POST"])
 @login_required
 def delete_lecture(lecture_id: int):
@@ -566,7 +558,6 @@ def delete_lecture(lecture_id: int):
     db.session.delete(lecture)
     db.session.commit()
 
-    # Bulk-delete notifications in the background — not in the request cycle
     from tasks import bulk_delete_notifications
     bulk_delete_notifications.delay(lecture_id)
 
@@ -575,9 +566,7 @@ def delete_lecture(lecture_id: int):
     return redirect(url_for("lecturer_dashboard"))
 
 
-# ===========================================================================
-# ADMIN DASHBOARD
-# ===========================================================================
+# ── ADMIN DASHBOARD ───────────────────────────────────────────────────────────
 @app.route("/admin/dashboard")
 @login_required
 def admin_dashboard():
@@ -613,7 +602,6 @@ def admin_dashboard():
         .order_by(Lecture.id.desc())
         .paginate(page=lect_page, per_page=PAGE_SIZE_ADMIN_LECTURES, error_out=False)
     )
-    # Flat list for template (admin_dashboard uses `recent_lectures` directly)
     recent_lectures = recent_lectures_pag.items
     students        = students_pag.items
 
@@ -681,6 +669,7 @@ def admin_assign_lecturer():
 
     return redirect(url_for("admin_dashboard"))
 
+
 @app.route("/setup-admin-xk92")
 def setup_admin():
     from werkzeug.security import generate_password_hash
@@ -696,9 +685,9 @@ def setup_admin():
     db.session.add(admin)
     db.session.commit()
     return jsonify({"msg": "Admin created successfully"})
-# ===========================================================================
-# Health check
-# ===========================================================================
+
+
+# ── Health check ──────────────────────────────────────────────────────────────
 @app.route("/health")
 def health():
     db_ok = False

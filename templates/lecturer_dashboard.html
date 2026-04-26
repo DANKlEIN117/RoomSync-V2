@@ -93,8 +93,12 @@
         .filter-btn.active{background:rgba(139,92,246,.15);color:var(--text);border-color:rgba(139,92,246,.3);}
 
         .lecture-list{display:flex;flex-direction:column;gap:9px;}
-        .lecture-row{display:flex;align-items:stretch;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;transition:.2s;}
-        .lecture-row:hover{transform:translateY(-2px);border-color:rgba(139,92,246,.3);box-shadow:0 6px 24px rgba(0,0,0,.3);}
+
+        /* ── Lecture Row (enhanced with message) ── */
+        .lecture-row{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;transition:.2s;}
+        .lecture-row:hover{border-color:rgba(139,92,246,.3);box-shadow:0 6px 24px rgba(0,0,0,.3);}
+        .lecture-row-main{display:flex;align-items:stretch;transition:.2s;}
+        .lecture-row-main:hover{transform:translateY(-1px);}
         .row-bar{width:4px;flex-shrink:0;}
         .row-bar.v{background:var(--violet)}.row-bar.b{background:var(--accent)}.row-bar.t{background:var(--accent2)}.row-bar.a{background:var(--amber)}
         .row-body{flex:1;display:flex;align-items:center;gap:10px;padding:12px 14px;min-width:0;}
@@ -105,9 +109,47 @@
         .row-prog{font-size:10px;color:var(--accent2);margin-bottom:4px;font-weight:500;}
         .row-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
         .meta-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--muted);}
-        .row-actions{display:flex;align-items:center;padding-right:8px;flex-shrink:0;}
+
+        /* Has-message indicator */
+        .msg-dot{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--accent2);background:rgba(0,229,195,.10);border:1px solid rgba(0,229,195,.2);border-radius:99px;padding:2px 7px;margin-left:2px;}
+        .msg-dot svg{flex-shrink:0;}
+        .online-dot{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--violet);background:rgba(139,92,246,.10);border:1px solid rgba(139,92,246,.2);border-radius:99px;padding:2px 7px;}
+
+        .row-actions{display:flex;align-items:center;gap:6px;padding-right:8px;flex-shrink:0;}
         .action-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--glass);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:.18s;}
+        .action-btn:hover{background:rgba(255,255,255,.06);color:var(--text);}
+        .action-btn.active{background:rgba(0,229,195,.10);color:var(--accent2);border-color:rgba(0,229,195,.25);}
         .action-btn.danger:hover{background:rgba(244,63,94,.1);color:var(--rose);border-color:rgba(244,63,94,.25);}
+
+        /* ── Inline class message panel ── */
+        .lecture-msg-panel{display:none;border-top:1px solid var(--border);padding:0 14px 0 18px;overflow:hidden;transition:all .3s cubic-bezier(.22,1,.36,1);}
+        .lecture-msg-panel.open{display:block;animation:slideDown .28s cubic-bezier(.22,1,.36,1) both;}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+        .msg-panel-inner{padding:14px 0 16px;}
+        .msg-panel-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+        .msg-panel-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+        .msg-body{font-size:13px;color:var(--text);line-height:1.7;white-space:pre-wrap;word-break:break-word;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+        .msg-link-row{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);}
+        .msg-link-row svg{flex-shrink:0;color:var(--violet);}
+        .msg-link-row a{font-size:12px;font-weight:600;color:var(--violet);text-decoration:none;word-break:break-all;}
+        .msg-link-row a:hover{color:#b78dff;text-decoration:underline;}
+        .msg-empty{font-size:13px;color:var(--muted);font-style:italic;padding:4px 0;}
+
+        /* Edit message inline */
+        .msg-edit-area{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;padding:11px 13px;outline:none;resize:vertical;min-height:90px;line-height:1.65;transition:.2s;}
+        .msg-edit-area:focus{border-color:rgba(37,99,255,.5);background:rgba(37,99,255,.07);box-shadow:0 0 0 3px rgba(37,99,255,.1);}
+        .msg-link-input{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;padding:10px 12px;outline:none;transition:.2s;margin-top:8px;}
+        .msg-link-input:focus{border-color:rgba(139,92,246,.5);box-shadow:0 0 0 3px rgba(139,92,246,.1);}
+        .msg-link-input::placeholder{color:var(--muted);}
+        .msg-edit-actions{display:flex;gap:8px;margin-top:10px;}
+        .msg-save-btn{flex:1;padding:10px;background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;border:none;border-radius:9px;cursor:pointer;transition:.2s;}
+        .msg-save-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,255,.45);}
+        .msg-cancel-btn{padding:10px 16px;border-radius:9px;border:1px solid var(--border2);background:var(--glass);color:var(--muted);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:.2s;}
+        .msg-cancel-btn:hover{color:var(--text);}
+
+        /* Saved pulse */
+        @keyframes savedPulse{0%{box-shadow:0 0 0 0 rgba(0,229,195,.5)}100%{box-shadow:0 0 0 10px rgba(0,229,195,0)}}
+        .just-saved{animation:savedPulse .6s ease-out;}
 
         .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;gap:12px;}
         .empty-icon{width:60px;height:60px;border-radius:16px;background:var(--glass);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;}
@@ -140,11 +182,30 @@
         .input-wrap{position:relative;}
         .input-wrap .i-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;transition:.18s;display:flex;align-items:center;}
         .input-wrap:focus-within .i-icon{color:var(--accent2);}
-        input[type="time"],select{width:100%;padding:12px 12px 12px 36px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:16px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;-webkit-appearance:none;appearance:none;min-height:48px;}
+        input[type="time"],input[type="url"],select{width:100%;padding:12px 12px 12px 36px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:16px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;-webkit-appearance:none;appearance:none;min-height:48px;}
+        input[type="url"]{font-size:13px;}
         input:focus,select:focus{border-color:rgba(37,99,255,.5);background:rgba(37,99,255,.07);box-shadow:0 0 0 3px rgba(37,99,255,.1);}
         select{cursor:pointer;}
         select option{background:var(--panel);color:var(--text);}
         .time-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+        /* Class message field in form */
+        .msg-field-wrap{display:flex;flex-direction:column;gap:0;}
+        .msg-optional-label{font-size:10px;color:var(--accent2);font-weight:600;margin-left:4px;opacity:.8;}
+        textarea.f-textarea{width:100%;padding:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;resize:vertical;min-height:88px;line-height:1.65;}
+        textarea.f-textarea:focus{border-color:rgba(37,99,255,.5);background:rgba(37,99,195,.07);box-shadow:0 0 0 3px rgba(37,99,255,.1);}
+        textarea.f-textarea::placeholder{color:var(--muted);}
+        .online-toggle-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:10px;cursor:pointer;user-select:none;}
+        .toggle-switch{width:34px;height:18px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid var(--border2);position:relative;flex-shrink:0;transition:.25s;}
+        .toggle-switch::after{content:'';width:12px;height:12px;border-radius:50%;background:var(--muted);position:absolute;top:2px;left:2px;transition:.25s;}
+        input[type="checkbox"].toggle-cb{display:none;}
+        input[type="checkbox"].toggle-cb:checked+.online-toggle-row .toggle-switch{background:var(--violet);border-color:var(--violet);}
+        input[type="checkbox"].toggle-cb:checked+.online-toggle-row .toggle-switch::after{left:18px;background:#fff;}
+        .toggle-label-text{font-size:12px;font-weight:600;color:var(--muted);flex:1;}
+        input[type="checkbox"].toggle-cb:checked+.online-toggle-row .toggle-label-text{color:var(--text);}
+        .url-field-wrap{margin-top:8px;display:none;animation:fadeUp .25s both;}
+        .url-field-wrap.show{display:block;}
+
         .course-badge{display:none;margin-top:7px;padding:9px 11px;border-radius:9px;background:rgba(0,229,195,.07);border:1px solid rgba(0,229,195,.2);font-size:11px;color:rgba(226,232,246,.75);line-height:1.6;}
         .course-badge.show{display:block;}
         .course-badge strong{color:var(--accent2);}
@@ -183,6 +244,12 @@
         .flash{padding:11px 13px;border-radius:10px;font-size:13px;margin-bottom:14px;}
         .flash.error{border:1px solid rgba(244,63,94,.3);background:rgba(244,63,94,.08);color:#fb7185;}
         .flash.success{border:1px solid rgba(34,197,94,.3);background:rgba(34,197,94,.08);color:#4ade80;}
+
+        /* Confirm step: message preview */
+        .conf-msg-preview{margin-top:8px;padding:10px 12px;border-radius:9px;background:rgba(0,229,195,.06);border:1px solid rgba(0,229,195,.15);font-size:12px;color:rgba(226,232,246,.7);line-height:1.6;display:none;white-space:pre-wrap;word-break:break-word;}
+        .conf-msg-preview.show{display:block;}
+        .conf-link-preview{display:none;align-items:center;gap:7px;margin-top:6px;padding:7px 10px;border-radius:8px;background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.18);font-size:11px;color:var(--violet);word-break:break-all;}
+        .conf-link-preview.show{display:flex;}
 
         .summary-panel{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;animation:fadeUp .5s .30s both;}
         .day-schedule{display:flex;flex-direction:column;gap:0;margin-top:10px;}
@@ -283,7 +350,6 @@
 
     <div class="content">
 
-        {# ── Stats: use lectures_pag, not lectures ── #}
         {% set lec_total = lectures_pag.total if lectures_pag else 0 %}
         <div class="stats-row">
             <div class="stat-card cv"><div class="stat-icon v">📚</div>
@@ -310,10 +376,10 @@
 
         <div class="grid-2">
 
-            <!-- Left: lecture list -->
+            <!-- ════ Left: lecture list ════ -->
             <div class="list-panel">
                 <div class="sec-head">
-                    <div><div class="sec-title">Scheduled Lectures</div><div class="sec-sub">Ordered by day and time</div></div>
+                    <div><div class="sec-title">Scheduled Lectures</div><div class="sec-sub">Tap the message icon to add notes for students</div></div>
                     <span class="sec-count">{{ lec_total }} total</span>
                 </div>
                 <div class="filter-row">
@@ -326,35 +392,123 @@
                     {% if lectures_pag and lectures_pag.items %}
                         {% set colors = ['v','b','t','a'] %}
                         {% for lecture in lectures_pag.items %}
-                        <div class="lecture-row" data-day="{{ lecture.day }}">
-                            <div class="row-bar {{ colors[loop.index0 % 4] }}"></div>
-                            <div class="row-body">
-                                <div class="row-time">
-                                    <b>{{ lecture.start_time.strftime('%H:%M') }}</b>
-                                    {{ lecture.end_time.strftime('%H:%M') }}
-                                </div>
-                                <div class="row-info">
-                                    <div class="row-course">{{ lecture.course.name }}</div>
-                                    <div class="row-prog">{{ lecture.course.programme.code }} · Yr {{ lecture.course.year }} Sem {{ lecture.course.semester }}</div>
-                                    <div class="row-meta">
-                                        <span class="meta-tag">
-                                            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                                            {{ lecture.room.name }}
-                                        </span>
-                                        <span class="meta-tag">
-                                            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                                            {{ lecture.day[:3] }}
-                                        </span>
-                                        <span class="meta-tag">👥 {{ lecture.course.enrollments|length }}</span>
+                        <div class="lecture-row" data-day="{{ lecture.day }}" data-id="{{ lecture.id }}">
+                            <div class="lecture-row-main">
+                                <div class="row-bar {{ colors[loop.index0 % 4] }}"></div>
+                                <div class="row-body">
+                                    <div class="row-time">
+                                        <b>{{ lecture.start_time.strftime('%H:%M') }}</b>
+                                        {{ lecture.end_time.strftime('%H:%M') }}
+                                    </div>
+                                    <div class="row-info">
+                                        <div class="row-course">{{ lecture.course.name }}</div>
+                                        <div class="row-prog">{{ lecture.course.programme.code }} · Yr {{ lecture.course.year }} Sem {{ lecture.course.semester }}</div>
+                                        <div class="row-meta">
+                                            <span class="meta-tag">
+                                                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                                                {{ lecture.room.name }}
+                                            </span>
+                                            <span class="meta-tag">
+                                                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                                {{ lecture.day[:3] }}
+                                            </span>
+                                            <span class="meta-tag">👥 {{ lecture.course.enrollments|length }}</span>
+                                            {# Show badges if lecture has message/link from DB #}
+                                            {% if lecture.class_message %}
+                                            <span class="msg-dot">
+                                                <svg width="8" height="8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                                Note
+                                            </span>
+                                            {% endif %}
+                                            {% if lecture.online_link %}
+                                            <span class="online-dot">
+                                                <svg width="8" height="8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                                Online
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row-actions">
+                                        <!-- Message toggle button -->
+                                        <button type="button"
+                                                class="action-btn {% if lecture.class_message %}active{% endif %}"
+                                                id="msg-btn-{{ lecture.id }}"
+                                                onclick="toggleMsg({{ lecture.id }})"
+                                                title="Class message &amp; notes">
+                                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        </button>
+                                        <!-- Delete -->
+                                        <form method="POST" action="/delete-lecture/{{ lecture.id }}">
+                                            <button type="submit" class="action-btn danger"
+                                                    onclick="return confirm('Delete this lecture? Students will lose visibility of it.')">
+                                                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
-                                <div class="row-actions">
-                                    <form method="POST" action="/delete-lecture/{{ lecture.id }}">
-                                        <button type="submit" class="action-btn danger"
-                                                onclick="return confirm('Delete this lecture? Students will lose visibility of it.')">
-                                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-                                        </button>
-                                    </form>
+                            </div>
+
+                            <!-- ── Class Message Panel (per lecture) ── -->
+                            <div class="lecture-msg-panel" id="msg-panel-{{ lecture.id }}">
+                                <div class="msg-panel-inner">
+                                    <!-- VIEW mode -->
+                                    <div id="msg-view-{{ lecture.id }}">
+                                        <div class="msg-panel-header">
+                                            <svg width="13" height="13" fill="none" stroke="var(--accent2)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                            <span class="msg-panel-title">Class Message to Students</span>
+                                            <button type="button" onclick="startEdit({{ lecture.id }})"
+                                                    style="margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;border:1px solid var(--border);transition:.15s;"
+                                                    onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">
+                                                ✏️ Edit
+                                            </button>
+                                        </div>
+                                        <div id="msg-text-{{ lecture.id }}">
+                                            {% if lecture.class_message %}
+                                            <div class="msg-body">{{ lecture.class_message }}</div>
+                                            {% else %}
+                                            <div class="msg-empty">No message yet. Click Edit to add prep notes, expectations, or reading materials for your students.</div>
+                                            {% endif %}
+                                        </div>
+                                        {% if lecture.online_link %}
+                                        <div class="msg-link-row" id="msg-link-{{ lecture.id }}">
+                                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                            <div>
+                                                <div style="font-size:10px;color:var(--muted);margin-bottom:2px;font-weight:600;letter-spacing:.05em;text-transform:uppercase">Online Class Link</div>
+                                                <a href="{{ lecture.online_link }}" target="_blank" rel="noopener">{{ lecture.online_link }}</a>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="msg-link-row" id="msg-link-{{ lecture.id }}" style="display:none">
+                                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                            <div>
+                                                <div style="font-size:10px;color:var(--muted);margin-bottom:2px;font-weight:600;letter-spacing:.05em;text-transform:uppercase">Online Class Link</div>
+                                                <a href="" target="_blank" rel="noopener" id="msg-link-anchor-{{ lecture.id }}"></a>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- EDIT mode (hidden by default) -->
+                                    <div id="msg-edit-{{ lecture.id }}" style="display:none">
+                                        <div class="msg-panel-header">
+                                            <svg width="13" height="13" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                            <span class="msg-panel-title">Edit Class Message</span>
+                                        </div>
+                                        <textarea class="msg-edit-area"
+                                                  id="msg-textarea-{{ lecture.id }}"
+                                                  placeholder="e.g. Please read Chapter 4 on BJT biasing before this class. We'll be doing worked examples on the whiteboard and I expect you to already know Kirchhoff's voltage law…">{{ lecture.class_message or '' }}</textarea>
+                                        <input class="msg-link-input"
+                                               id="msg-link-input-{{ lecture.id }}"
+                                               type="url"
+                                               placeholder="Online class link (optional) — e.g. https://meet.google.com/abc-defg"
+                                               value="{{ lecture.online_link or '' }}">
+                                        <div class="msg-edit-actions">
+                                            <button type="button" class="msg-cancel-btn" onclick="cancelEdit({{ lecture.id }})">Cancel</button>
+                                            <button type="button" class="msg-save-btn" onclick="saveMsg({{ lecture.id }})">
+                                                Save &amp; Notify Students
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -378,7 +532,7 @@
                 {% endif %}
             </div>
 
-            <!-- Right column -->
+            <!-- ════ Right column ════ -->
             <div class="right-col">
 
                 <!-- 3-step form -->
@@ -401,7 +555,7 @@
 
                     <form method="POST" action="/create-lecture" id="lecture-form">
 
-                        <!-- Step 1 -->
+                        <!-- ── Step 1: Course, Day, Time + Class Message ── -->
                         <div class="form-step active" id="step1">
                             {% if courses %}
                             <div class="form-fields">
@@ -450,6 +604,38 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- ── Class Message (optional) ── -->
+                                <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:2px;">
+                                    <label class="f-label">
+                                        Class Message
+                                        <span class="msg-optional-label">optional</span>
+                                    </label>
+                                    <textarea class="f-textarea"
+                                              name="class_message"
+                                              id="form-class-msg"
+                                              placeholder="Tell students what to read, what to bring, or what the class will cover — e.g. 'Please review Chapter 3 on PN junctions. We'll start with a quiz on forward bias.'"></textarea>
+                                </div>
+
+                                <!-- Online class toggle -->
+                                <div>
+                                    <input type="checkbox" class="toggle-cb" id="online-toggle" onchange="toggleOnlineUrl(this)">
+                                    <label class="online-toggle-row" for="online-toggle">
+                                        <div class="toggle-switch"></div>
+                                        <span class="toggle-label-text">This will be an online class</span>
+                                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--violet);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                    </label>
+                                    <div class="url-field-wrap" id="online-url-wrap">
+                                        <div class="input-wrap" style="margin-top:0">
+                                            <span class="i-icon">
+                                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                            </span>
+                                            <input type="url" name="online_link" id="form-online-link"
+                                                   placeholder="https://meet.google.com/abc-defg or Zoom link…">
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <button type="button" class="btn-find-rooms" id="find-rooms-btn" onclick="fetchRooms()">
                                     <span class="spinner" id="find-spinner"></span>
                                     <svg id="find-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -461,7 +647,7 @@
                             {% endif %}
                         </div>
 
-                        <!-- Step 2 -->
+                        <!-- ── Step 2: Pick Room ── -->
                         <div class="form-step" id="step2">
                             <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6">
                                 <strong style="color:var(--accent2)" id="room-count">0</strong> rooms available for
@@ -476,7 +662,7 @@
                             </div>
                         </div>
 
-                        <!-- Step 3 -->
+                        <!-- ── Step 3: Confirm ── -->
                         <div class="form-step" id="step3">
                             <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px;margin-bottom:14px">
                                 <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;font-weight:600">Lecture Summary</div>
@@ -490,6 +676,12 @@
                                     <div style="display:flex;justify-content:space-between;font-size:12px;gap:8px"><span style="color:var(--muted);flex-shrink:0">Building</span><span id="conf-building" style="font-weight:600">–</span></div>
                                     <div style="height:1px;background:var(--border);margin:2px 0"></div>
                                     <div style="display:flex;justify-content:space-between;font-size:12px;gap:8px"><span style="color:var(--muted);flex-shrink:0">Students notified</span><span id="conf-enrolled" style="font-weight:700;color:var(--accent2)">–</span></div>
+                                </div>
+                                <!-- Message preview in confirm step -->
+                                <div id="conf-msg-preview" class="conf-msg-preview"></div>
+                                <div id="conf-link-preview" class="conf-link-preview">
+                                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                    <span id="conf-link-text">–</span>
                                 </div>
                             </div>
                             <input type="hidden" name="room_id" id="hidden-room-id">
@@ -530,6 +722,7 @@
 </div>
 
 <script>
+    /* ── Greeting & date ── */
     const h = new Date().getHours();
     document.getElementById('greeting-word').textContent = h<12?'morning':h<17?'afternoon':'evening';
     document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'short'});
@@ -537,6 +730,7 @@
     const np = "{{ user.name }}".trim().split(' ');
     document.getElementById('avatar-initials').textContent = (np.length>=2?np[0][0]+np[np.length-1][0]:np[0].slice(0,2)).toUpperCase();
 
+    /* ── Sidebar ── */
     const sidebar=document.getElementById('sidebar'), sbOverlay=document.getElementById('sb-overlay');
     function openSidebar(){sidebar.classList.add('open');sbOverlay.classList.add('show');document.body.style.overflow='hidden';}
     function closeSidebar(){sidebar.classList.remove('open');sbOverlay.classList.remove('show');document.body.style.overflow='';}
@@ -544,12 +738,14 @@
 
     function scrollToForm(){document.getElementById('create-form').scrollIntoView({behavior:'smooth',block:'start'});}
 
+    /* ── Day filter ── */
     function setFilter(btn,day){
         document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         document.querySelectorAll('.lecture-row').forEach(r=>{r.style.display=(day==='all'||r.dataset.day===day)?'':'none';});
     }
 
+    /* ── Course select badge ── */
     function onCourseSelect(sel){
         const opt=sel.options[sel.selectedIndex];
         const badge=document.getElementById('course-badge');
@@ -557,6 +753,14 @@
         badge.classList.add('show');
     }
 
+    /* ── Online class toggle ── */
+    function toggleOnlineUrl(cb){
+        const wrap=document.getElementById('online-url-wrap');
+        wrap.classList.toggle('show',cb.checked);
+        if(!cb.checked)document.getElementById('form-online-link').value='';
+    }
+
+    /* ── Room selection ── */
     let selectedRoom=null;
 
     function goStep(n){
@@ -634,6 +838,121 @@
         document.getElementById('conf-building').textContent=selectedRoom.building;
         document.getElementById('conf-enrolled').textContent=opt.dataset.enrolled+' students';
         document.getElementById('hidden-room-id').value=selectedRoom.id;
+
+        /* Show class message preview in confirm step */
+        const msgText=(document.getElementById('form-class-msg').value||'').trim();
+        const linkVal=(document.getElementById('form-online-link')?.value||'').trim();
+        const prevEl=document.getElementById('conf-msg-preview');
+        const linkEl=document.getElementById('conf-link-preview');
+        if(msgText){prevEl.textContent=msgText;prevEl.classList.add('show');}
+        else prevEl.classList.remove('show');
+        if(linkVal){document.getElementById('conf-link-text').textContent=linkVal;linkEl.classList.add('show');}
+        else linkEl.classList.remove('show');
+    }
+
+    /* ══════════════════════════════════════════════
+       Per-lecture message panel logic
+    ══════════════════════════════════════════════ */
+
+    function toggleMsg(id){
+        const panel=document.getElementById('msg-panel-'+id);
+        const btn=document.getElementById('msg-btn-'+id);
+        const isOpen=panel.classList.contains('open');
+        /* Close all others first */
+        document.querySelectorAll('.lecture-msg-panel.open').forEach(p=>{
+            if(p.id!=='msg-panel-'+id)p.classList.remove('open');
+        });
+        panel.classList.toggle('open',!isOpen);
+        btn.classList.toggle('active',!isOpen);
+    }
+
+    function startEdit(id){
+        document.getElementById('msg-view-'+id).style.display='none';
+        document.getElementById('msg-edit-'+id).style.display='block';
+        document.getElementById('msg-textarea-'+id).focus();
+    }
+
+    function cancelEdit(id){
+        document.getElementById('msg-edit-'+id).style.display='none';
+        document.getElementById('msg-view-'+id).style.display='block';
+    }
+
+    async function saveMsg(id){
+        const msgText=document.getElementById('msg-textarea-'+id).value.trim();
+        const linkVal=document.getElementById('msg-link-input-'+id).value.trim();
+        const saveBtn=document.querySelector(`#msg-edit-${id} .msg-save-btn`);
+        saveBtn.disabled=true;saveBtn.textContent='Saving…';
+
+        try{
+            /* POST to your Flask endpoint — implement as needed */
+            const res=await fetch(`/update-lecture-message/${id}`,{
+                method:'POST',
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                body:`class_message=${encodeURIComponent(msgText)}&online_link=${encodeURIComponent(linkVal)}`
+            });
+
+            if(!res.ok)throw new Error('Server error');
+
+            /* Update view mode */
+            const textWrap=document.getElementById('msg-text-'+id);
+            if(msgText){
+                textWrap.innerHTML=`<div class="msg-body">${escHtml(msgText)}</div>`;
+            } else {
+                textWrap.innerHTML=`<div class="msg-empty">No message yet. Click Edit to add prep notes, expectations, or reading materials for your students.</div>`;
+            }
+
+            const linkRow=document.getElementById('msg-link-'+id);
+            if(linkVal){
+                linkRow.style.display='flex';
+                const anchor=linkRow.querySelector('a');
+                anchor.href=linkVal;anchor.textContent=linkVal;
+            } else {
+                linkRow.style.display='none';
+            }
+
+            /* Update badge indicators on the row */
+            updateBadges(id, msgText, linkVal);
+
+            cancelEdit(id);
+
+            /* Pulse the panel */
+            const panel=document.getElementById('msg-panel-'+id);
+            panel.classList.add('just-saved');
+            setTimeout(()=>panel.classList.remove('just-saved'),700);
+
+        } catch(e){
+            alert('Could not save. Please try again.');
+        } finally {
+            saveBtn.disabled=false;saveBtn.textContent='Save & Notify Students';
+        }
+    }
+
+    function updateBadges(id, msgText, linkVal){
+        const row=document.querySelector(`.lecture-row[data-id="${id}"]`);
+        if(!row)return;
+        const meta=row.querySelector('.row-meta');
+
+        /* Remove existing badges */
+        meta.querySelectorAll('.msg-dot,.online-dot').forEach(b=>b.remove());
+
+        if(msgText){
+            const d=document.createElement('span');d.className='msg-dot';
+            d.innerHTML=`<svg width="8" height="8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Note`;
+            meta.appendChild(d);
+        }
+        if(linkVal){
+            const d=document.createElement('span');d.className='online-dot';
+            d.innerHTML=`<svg width="8" height="8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Online`;
+            meta.appendChild(d);
+        }
+
+        /* Toggle active colour on message button */
+        const btn=document.getElementById('msg-btn-'+id);
+        btn.classList.toggle('active',!!(msgText||linkVal));
+    }
+
+    function escHtml(s){
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 </script>
 </body>

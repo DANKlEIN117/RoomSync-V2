@@ -14,17 +14,16 @@ load_dotenv()
 
 logger = get_task_logger(__name__)
 
-# ---------------------------------------------------------------------------
+
 # Ensure the project root is always on sys.path, regardless of where the
 # Celery worker process was launched from.
-# ---------------------------------------------------------------------------
+
 _PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
-# ---------------------------------------------------------------------------
+
 # Celery app
-# ---------------------------------------------------------------------------
 BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/1")
 RESULT_URL = os.getenv("CELERY_RESULT_URL", "redis://localhost:6379/2")
 
@@ -58,9 +57,8 @@ celery_app.conf.update(
 )
 
 
-# ---------------------------------------------------------------------------
+
 # Helpers
-# ---------------------------------------------------------------------------
 def _get_flask_app():
     """
     Load Flask app by absolute file path — works regardless of cwd,
@@ -77,9 +75,8 @@ def _get_flask_app():
         sys.modules["app"] = mod
         spec.loader.exec_module(mod)
     return sys.modules["app"].app
-# ---------------------------------------------------------------------------
+
 # TASK 1 — In-app notification fan-out
-# ---------------------------------------------------------------------------
 @celery_app.task(
     bind=True,
     name="tasks.dispatch_lecture_notifications",
@@ -155,9 +152,8 @@ def dispatch_lecture_notifications(self, lecture_id: int) -> dict:
             raise self.retry(exc=exc)
 
 
-# ---------------------------------------------------------------------------
+
 # TASK 2 — Email fan-out
-# ---------------------------------------------------------------------------
 @celery_app.task(
     bind=True,
     name="tasks.send_lecture_emails",
@@ -242,9 +238,8 @@ def send_lecture_emails(self, lecture_id: int) -> dict:
             raise self.retry(exc=exc)
 
 
-# ---------------------------------------------------------------------------
+
 # TASK 3 — Bulk-delete notifications when a lecture is removed
-# ---------------------------------------------------------------------------
 @celery_app.task(
     bind=True,
     name="tasks.bulk_delete_notifications",
@@ -271,9 +266,8 @@ def bulk_delete_notifications(self, lecture_id: int) -> dict:
             raise self.retry(exc=exc)
 
 
-# ---------------------------------------------------------------------------
+
 # TASK 4 — Pre-warm room availability cache
-# ---------------------------------------------------------------------------
 @celery_app.task(
     name="tasks.warm_room_cache",
     queue="default",
@@ -312,9 +306,8 @@ def warm_room_cache() -> dict:
         return {"warmed": warmed}
 
 
-# ---------------------------------------------------------------------------
+
 # TASK 5 — Pre-warm course list cache per programme
-# ---------------------------------------------------------------------------
 @celery_app.task(
     name="tasks.warm_course_cache",
     queue="default",
