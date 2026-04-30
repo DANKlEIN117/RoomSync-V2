@@ -141,7 +141,7 @@ class Lecture(db.Model):
     online_link   = db.Column(db.String(512),   nullable=True)   # Zoom / Meet URL
 
     lecturer_id = db.Column(db.Integer, db.ForeignKey('user.id'),   nullable=False)
-    room_id     = db.Column(db.Integer, db.ForeignKey('room.id'),   nullable=False)
+    room_id     = db.Column(db.Integer, db.ForeignKey('room.id'),   nullable=True)   # NULL for online lectures
     course_id   = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
 
     notifications = db.relationship('Notification', backref='lecture', lazy=True)

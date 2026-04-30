@@ -423,22 +423,28 @@ def create_lecture():
         return redirect(url_for("login"))
 
     course_id     = request.form.get("course_id",     "").strip()
-    room_id       = request.form.get("room_id",       "").strip()
+    room_id_raw   = request.form.get("room_id",       "").strip()  # empty for online lectures
     day           = request.form.get("day",           "").strip()
     start_str     = request.form.get("start_time",    "").strip()
     end_str       = request.form.get("end_time",      "").strip()
     class_message = request.form.get("class_message", "").strip() or None
     online_link   = request.form.get("online_link",   "").strip() or None
 
-    if not all([course_id, room_id, day, start_str, end_str]):
+    if not all([course_id, day, start_str, end_str]):
         flash("All fields are required.", "error")
+        return redirect(url_for("lecturer_dashboard"))
+
+    # room_id is required only for in-person lectures
+    is_online = bool(online_link)
+    if not is_online and not room_id_raw:
+        flash("Please select a room for in-person lectures.", "error")
         return redirect(url_for("lecturer_dashboard"))
 
     try:
         start     = datetime.strptime(start_str, "%H:%M").time()
         end       = datetime.strptime(end_str,   "%H:%M").time()
         course_id = int(course_id)
-        room_id   = int(room_id)
+        room_id   = int(room_id_raw) if room_id_raw else None
     except ValueError:
         flash("Invalid data submitted.", "error")
         return redirect(url_for("lecturer_dashboard"))
@@ -456,21 +462,11 @@ def create_lecture():
         flash("You already have a lecture during this time slot.", "error")
         return redirect(url_for("lecturer_dashboard"))
 
-    # Distributed lock: atomic Redis SET NX prevents double-booking
-    if not _cache.acquire_room_lock(day, start_str, end_str, room_id):
-        flash("That room is being booked right now. Please try again in a moment.", "error")
-        return redirect(url_for("lecturer_dashboard"))
-
-    try:
-        # DB is still the final source of truth — check again inside the lock
-        free_ids = {r.id for r in get_available_rooms(day, start, end)}
-        if room_id not in free_ids:
-            flash("That room was just taken. Please select another.", "error")
-            return redirect(url_for("lecturer_dashboard"))
-
+    if is_online:
+        # Online lectures need no room — skip lock and availability check
         lecture = Lecture(
             course_id=course_id,
-            room_id=room_id,
+            room_id=None,
             day=day,
             start_time=start,
             end_time=end,
@@ -480,19 +476,50 @@ def create_lecture():
         )
         db.session.add(lecture)
         db.session.commit()
+    else:
+        # Distributed lock: atomic Redis SET NX prevents double-booking
+        if not _cache.acquire_room_lock(day, start_str, end_str, room_id):
+            flash("That room is being booked right now. Please try again in a moment.", "error")
+            return redirect(url_for("lecturer_dashboard"))
 
-    finally:
-        _cache.release_room_lock(day, start_str, end_str, room_id)
+        try:
+            # DB is still the final source of truth — check again inside the lock
+            free_ids = {r.id for r in get_available_rooms(day, start, end)}
+            if room_id not in free_ids:
+                flash("That room was just taken. Please select another.", "error")
+                return redirect(url_for("lecturer_dashboard"))
+
+            lecture = Lecture(
+                course_id=course_id,
+                room_id=room_id,
+                day=day,
+                start_time=start,
+                end_time=end,
+                lecturer_id=current_user.id,
+                class_message=class_message,
+                online_link=online_link,
+            )
+            db.session.add(lecture)
+            db.session.commit()
+
+        finally:
+            _cache.release_room_lock(day, start_str, end_str, room_id)
 
     # Offload fan-out to Celery — response returns in ~5 ms
     from tasks import dispatch_lecture_notifications
     dispatch_lecture_notifications.delay(lecture.id)
 
-    _cache.cache_delete(f"rooms:avail:{day}:{start_str}:{end_str}")
+    if not is_online:
+        _cache.cache_delete(f"rooms:avail:{day}:{start_str}:{end_str}")
 
-    room = db.session.get(Room, room_id)
+    if is_online:
+        location_str = "Online"
+    else:
+        room = db.session.get(Room, room_id)
+        location_str = room.name if room else "—"
+
     flash(
-        f'"{course.name}" scheduled in {room.name} — {day} {start_str}–{end_str}. '
+        f'"{course.name}" scheduled ({location_str}) — {day} {start_str}–{end_str}. '
         "Students will be notified shortly.",
         "success",
     )
@@ -686,6 +713,32 @@ def setup_admin():
     db.session.commit()
     return jsonify({"msg": "Admin created successfully"})
 
+
+# ── MANUAL PURGE TRIGGER (admin only) ────────────────────────────────────────
+@app.route("/admin/purge-expired-lectures", methods=["POST"])
+@login_required
+@_admin_only
+def admin_purge_expired_lectures():
+    from tasks import purge_expired_lectures
+
+    result = purge_expired_lectures.delay()
+
+    try:
+        outcome = result.get(timeout=10)
+
+        flash(
+            f"Purge complete — {outcome.get('purged', 0)} lecture(s) removed, "
+            f"{outcome.get('notifications_deleted', 0)} notification(s) deleted.",
+            "success",
+        )
+
+    except Exception as e:
+        flash(
+            f"Task started but no immediate result. Possible issue: {str(e)}",
+            "warning",
+        )
+
+    return redirect(url_for("admin_dashboard"))
 
 # ── Health check ──────────────────────────────────────────────────────────────
 @app.route("/health")

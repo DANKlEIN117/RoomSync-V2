@@ -537,6 +537,12 @@
             <span class="sb-icon green">🌱</span>
             Seed Utilities
         </button>
+
+        <form method="POST" action="/admin/purge-expired-lectures" style="display:inline">
+            <button class="sb-link"  type="submit" onclick="return confirm('Purge all expired lectures now?')">
+                🗑️ Purge Expired Lectures
+            </button>
+        </form>
     </nav>
 
     <div class="sb-bottom">
