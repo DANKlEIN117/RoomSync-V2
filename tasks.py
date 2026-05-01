@@ -22,7 +22,7 @@ if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 
-# ── Celery app ────────────────────────────────────────────────────────────────
+# Celery app 
 BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/1")
 RESULT_URL = os.getenv("CELERY_RESULT_URL", "redis://localhost:6379/2")
 
@@ -63,7 +63,7 @@ celery_app.conf.update(
 )
 
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# Helpers 
 def _get_flask_app():
     """
     Load Flask app by absolute file path — works regardless of cwd,
@@ -81,7 +81,7 @@ def _get_flask_app():
     return sys.modules["app"].app
 
 
-# ── TASK 1 — In-app notification fan-out ──────────────────────────────────────
+# TASK 1 — In-app notification fan-out 
 @celery_app.task(
     bind=True,
     name="tasks.dispatch_lecture_notifications",
@@ -172,7 +172,7 @@ def dispatch_lecture_notifications(self, lecture_id: int) -> dict:
             raise self.retry(exc=exc)
 
 
-# ── TASK 2 — Email fan-out ────────────────────────────────────────────────────
+# TASK 2 — Email fan-out 
 @celery_app.task(
     bind=True,
     name="tasks.send_lecture_emails",
@@ -257,7 +257,7 @@ def send_lecture_emails(self, lecture_id: int) -> dict:
             raise self.retry(exc=exc)
 
 
-# ── TASK 3 — Bulk-delete notifications when a lecture is removed ──────────────
+# TASK 3 — Bulk-delete notifications when a lecture is removed
 @celery_app.task(
     bind=True,
     name="tasks.bulk_delete_notifications",
@@ -287,7 +287,7 @@ def bulk_delete_notifications(self, lecture_id: int) -> dict:
             raise self.retry(exc=exc)
 
 
-# ── TASK 4 — Purge lectures whose end_time has passed ─────────────────────────
+# TASK 4 — Purge lectures whose end_time has passed 
 @celery_app.task(
     bind=True,
     name="tasks.purge_expired_lectures",
@@ -304,7 +304,7 @@ def purge_expired_lectures(self) -> dict:
         import cache as _cache
 
         try:
-            # ── Current EAT time (UTC+3, no pytz needed) ──────────────────────
+            # Current EAT time (UTC+3, no pytz needed)
             now_eat  = datetime.utcnow() + timedelta(hours=3)
             today_wd = now_eat.weekday()   # 0=Mon … 6=Sun
             now_time = now_eat.time()      # e.g. datetime.time(10, 5, 0)
@@ -314,7 +314,7 @@ def purge_expired_lectures(self) -> dict:
                 "Thursday": 3, "Friday": 4, "Saturday": 5, "Sunday": 6,
             }
 
-            # ── Load all lectures: only the columns we need ───────────────────
+            # Load all lectures: only the columns we need 
             rows = db.session.execute(
                 text("SELECT id, day, start_time, end_time, room_id FROM lecture")
             ).fetchall()
@@ -358,7 +358,7 @@ def purge_expired_lectures(self) -> dict:
                             start_t.strftime("%H:%M"),
                             end_t.strftime("%H:%M"),
                         ))
-                # else: future — leave it alone
+                # else: future
 
             if not expired_ids:
                 logger.info("purge_expired_lectures: nothing to purge at %s EAT", now_eat.strftime("%H:%M"))
@@ -382,7 +382,7 @@ def purge_expired_lectures(self) -> dict:
 
             db.session.commit()
 
-            # ── Bust room cache for every freed slot ──────────────────────────
+            # Bust room cache for every freed slot
             if _cache.is_available():
                 for day, start_str, end_str in set(room_slots_to_bust):
                     _cache.cache_delete(f"rooms:avail:{day}:{start_str}:{end_str}")
@@ -402,7 +402,7 @@ def purge_expired_lectures(self) -> dict:
             raise self.retry(exc=exc)
 
 
-# ── TASK 5 — Pre-warm room availability cache ─────────────────────────────────
+# TASK 5 — Pre-warm room availability cache 
 @celery_app.task(
     name="tasks.warm_room_cache",
     queue="default",
@@ -440,7 +440,7 @@ def warm_room_cache() -> dict:
         return {"warmed": warmed}
 
 
-# ── TASK 6 — Pre-warm course list cache per programme ─────────────────────────
+# TASK 6 — Pre-warm course list cache per programme 
 @celery_app.task(
     name="tasks.warm_course_cache",
     queue="default",

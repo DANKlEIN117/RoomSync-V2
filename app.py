@@ -31,7 +31,7 @@ from scheduler import (check_lecturer_conflict, get_available_rooms,
 import cache as _cache
 
 
-# ── App factory ───────────────────────────────────────────────────────────────
+# App factory 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
 
@@ -67,7 +67,7 @@ app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 mail = Mail(app)
 
 
-# ── Auth ──────────────────────────────────────────────────────────────────────
+# Auth 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -79,14 +79,14 @@ def load_user(user_id: str):
     return db.session.get(User, int(user_id))
 
 
-# ── Constants ─────────────────────────────────────────────────────────────────
+# Constants
 PAGE_SIZE_LECTURES       = 20
 PAGE_SIZE_NOTIFICATIONS  = 15
 PAGE_SIZE_ADMIN_STUDENTS = 50
 PAGE_SIZE_ADMIN_LECTURES = 30
 
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# Helpers
 @app.before_request
 def refresh_session():
     if current_user.is_authenticated:
@@ -121,13 +121,13 @@ def _enrolled_ids_for(user_id: int):
     )
 
 
-# ── LANDING ───────────────────────────────────────────────────────────────────
+# LANDING 
 @app.route("/")
 def landing():
     return render_template("landing.html")
 
 
-# ── AUTH ──────────────────────────────────────────────────────────────────────
+# AUTH
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -195,7 +195,7 @@ def logout():
     return redirect(url_for("login"))
 
 
-# ── STUDENT DASHBOARD ─────────────────────────────────────────────────────────
+# STUDENT DASHBOARD 
 @app.route("/student")
 @login_required
 def student_dashboard():
@@ -235,7 +235,7 @@ def student_dashboard():
     )
 
 
-# ── NOTIFICATIONS — mark read ─────────────────────────────────────────────────
+# NOTIFICATIONS — mark read 
 @app.route("/notifications/mark-read", methods=["POST"])
 @login_required
 def mark_notifications_read():
@@ -246,7 +246,7 @@ def mark_notifications_read():
     return jsonify({"ok": True})
 
 
-# ── STUDENT PROFILE ───────────────────────────────────────────────────────────
+# STUDENT PROFILE 
 @app.route("/profile")
 @login_required
 def profile():
@@ -309,7 +309,7 @@ def unenroll(course_id: int):
     return jsonify({"ok": True, "message": "Unenrolled successfully."})
 
 
-# ── API courses by programme ──────────────────────────────────────────────────
+# API courses by programme 
 @app.route("/api/courses/<int:programme_id>")
 @login_required
 def api_courses(programme_id: int):
@@ -334,7 +334,7 @@ def api_courses(programme_id: int):
     return jsonify(raw)
 
 
-# ── LECTURER DASHBOARD ────────────────────────────────────────────────────────
+# LECTURER DASHBOARD
 @app.route("/lecturer")
 @login_required
 def lecturer_dashboard():
@@ -386,7 +386,7 @@ def lecturer_dashboard():
     )
 
 
-# ── ROOMS AVAILABLE — stampede-safe ──────────────────────────────────────────
+# ROOMS AVAILABLE — stampede-safe
 @app.route("/rooms/available", methods=["POST"])
 @login_required
 def available_rooms():
@@ -414,7 +414,7 @@ def available_rooms():
     return jsonify({"rooms": rooms})
 
 
-# ── CREATE LECTURE ────────────────────────────────────────────────────────────
+# CREATE LECTURE 
 @app.route("/create-lecture", methods=["POST"])
 @login_required
 def create_lecture():
@@ -526,7 +526,7 @@ def create_lecture():
     return redirect(url_for("lecturer_dashboard"))
 
 
-# ── UPDATE LECTURE MESSAGE ────────────────────────────────────────────────────
+# UPDATE LECTURE MESSAGE 
 @app.route("/update-lecture-message/<int:lecture_id>", methods=["POST"])
 @login_required
 def update_lecture_message(lecture_id: int):
@@ -565,7 +565,7 @@ def update_lecture_message(lecture_id: int):
     return jsonify({"ok": True})
 
 
-# ── DELETE LECTURE ────────────────────────────────────────────────────────────
+# DELETE LECTURE 
 @app.route("/delete-lecture/<int:lecture_id>", methods=["POST"])
 @login_required
 def delete_lecture(lecture_id: int):
@@ -593,7 +593,7 @@ def delete_lecture(lecture_id: int):
     return redirect(url_for("lecturer_dashboard"))
 
 
-# ── ADMIN DASHBOARD ───────────────────────────────────────────────────────────
+# ADMIN DASHBOARD 
 @app.route("/admin/dashboard")
 @login_required
 def admin_dashboard():
@@ -714,7 +714,7 @@ def setup_admin():
     return jsonify({"msg": "Admin created successfully"})
 
 
-# ── MANUAL PURGE TRIGGER (admin only) ────────────────────────────────────────
+# MANUAL PURGE TRIGGER (admin only)
 @app.route("/admin/purge-expired-lectures", methods=["POST"])
 @login_required
 @_admin_only
@@ -740,7 +740,7 @@ def admin_purge_expired_lectures():
 
     return redirect(url_for("admin_dashboard"))
 
-# ── Health check ──────────────────────────────────────────────────────────────
+# Health check
 @app.route("/health")
 def health():
     db_ok = False

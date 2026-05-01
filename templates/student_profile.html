@@ -336,7 +336,7 @@
                 </div>
 
                 <div id="courses-area">
-                    <div class="courses-empty">👆 Select a school and programme to browse courses.</div>
+                    <div class="courses-empty">Select a school and programme to browse courses.</div>
                 </div>
             </div>
 
@@ -394,7 +394,7 @@
         });
     })();
 
-    /* School → populate programme dropdown */
+    /* School populate programme dropdown */
     function onSchoolChange(sel) {
         const progSel = document.getElementById('prog-select');
         progSel.innerHTML = '<option value="">— Select Programme —</option>';
@@ -408,7 +408,7 @@
         progSel.disabled = false;
     }
 
-    /* Programme → fetch courses from API */
+    /* Programme fetch courses from API */
     async function onProgChange(sel) {
         if (!sel.value) return;
         document.getElementById('year-filter').style.display = 'none';

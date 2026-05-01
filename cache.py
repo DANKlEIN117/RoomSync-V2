@@ -1,7 +1,5 @@
 """
-cache.py — Redis cache helpers with stampede protection
-========================================================
-Solves two problems from the original cache.py inline code:
+Redis cache helpers with stampede protection
 
 1. Cache stampede (thundering herd):
    When a popular cache key expires under load, multiple workers hit the DB
@@ -32,9 +30,8 @@ from typing import Any, Callable, List, Optional
 
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
+
 # Redis client (singleton, shared across the process)
-# ---------------------------------------------------------------------------
 _redis = None  # set by init_cache()
 
 
@@ -64,10 +61,7 @@ def is_available() -> bool:
     return _redis is not None
 
 
-# ---------------------------------------------------------------------------
 # Low-level primitives
-# ---------------------------------------------------------------------------
-
 def cache_get(key: str) -> Optional[Any]:
     if _redis is None:
         return None
@@ -109,9 +103,7 @@ def cache_delete_pattern(pattern: str) -> int:
         return 0
 
 
-# ---------------------------------------------------------------------------
 # Stampede-safe fetch  (XFetch / Probabilistic Early Recomputation)
-# ---------------------------------------------------------------------------
 _DELTA_KEY_SUFFIX = ":delta"
 _CREATED_KEY_SUFFIX = ":created"
 _BETA = 1.0   # higher = more aggressive early recomputation (1.0 is optimal)
@@ -176,9 +168,7 @@ def stampede_safe_get(
         return recompute_fn()
 
 
-# ---------------------------------------------------------------------------
 # Per-user enrollment cache
-# ---------------------------------------------------------------------------
 _ENROLL_TTL = 120   # 2 minutes; invalidated explicitly on enroll/unenroll
 
 
@@ -201,9 +191,7 @@ def invalidate_enrollment_cache(user_id: int) -> None:
     cache_delete(f"enrolled:{user_id}")
 
 
-# ---------------------------------------------------------------------------
 # Optimistic locking helper for the create-lecture race condition
-# ---------------------------------------------------------------------------
 _LOCK_TTL = 10   # seconds
 
 

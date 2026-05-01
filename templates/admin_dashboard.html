@@ -718,7 +718,7 @@
             </div>
         </div>
 
-        <!-- ══ SECTION: ROOMS ══ -->
+        <!-- SECTION: ROOMS -->
         <div class="section" id="section-rooms">
             <div class="sec-header">
                 <h2>Room Management</h2>
@@ -811,7 +811,7 @@
             </div>
         </div>
 
-        <!-- ══ SECTION: SCHOOLS ══ -->
+        <!-- SECTION: SCHOOLS -->
         <div class="section" id="section-schools">
             <div class="sec-header">
                 <h2>Schools &amp; Programmes</h2>
@@ -862,7 +862,7 @@
             {% endif %}
         </div>
 
-        <!-- ══ SECTION: COURSES ══ -->
+        <!-- SECTION: COURSES -->
         <div class="section" id="section-courses">
             <div class="sec-header">
                 <h2>Course Management</h2>
@@ -928,7 +928,7 @@
             </div>
         </div>
 
-        <!-- ══ SECTION: ASSIGN ══ -->
+        <!-- SECTION: ASSIGN -->
         <div class="section" id="section-assign">
             <div class="sec-header">
                 <h2>Assign Lecturers to Courses</h2>
@@ -982,7 +982,7 @@
 
                             {% if not lecturers %}
                             <div style="padding:12px;border-radius:10px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);font-size:12px;color:var(--amber);margin-bottom:14px">
-                                ⚠ No lecturers registered yet. Ask lecturers to create accounts at <strong>/register</strong> using a @jkuat.ac.ke email.
+                                ⚠ No lecturers registered yet. Ask lecturers to create accounts using a jkuat email.
                             </div>
                             {% endif %}
 
@@ -1025,7 +1025,7 @@
             </div>
         </div>
 
-        <!-- ══ SECTION: SEED ══ -->
+        <!-- SECTION: SEED -->
         <div class="section" id="section-seed">
             <div class="sec-header">
                 <h2>Seed Utilities</h2>
@@ -1098,14 +1098,14 @@
 </div><!-- /main -->
 
 <script>
-    // ── Clock ──
+    // Clock 
     function tick() {
         document.getElementById('topbar-time').textContent =
             new Date().toLocaleTimeString('en-KE', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
     }
     tick(); setInterval(tick, 1000);
 
-    // ── Sidebar badge counts ──
+    // Sidebar badge counts
     document.getElementById('sb-rooms-badge').textContent   = '{{ rooms|length }}';
     document.getElementById('sb-schools-badge').textContent = '{{ schools|length }}';
     document.getElementById('sb-courses-badge').textContent = '{{ courses|length }}';
@@ -1113,7 +1113,7 @@
         b.classList.add(parseInt(b.textContent) > 0 ? 'ok' : 'warn');
     });
 
-    // ── Mobile sidebar ──
+    // Mobile sidebar 
     const sidebar  = document.getElementById('sidebar');
     const overlay  = document.getElementById('sidebar-overlay');
 
@@ -1128,7 +1128,7 @@
         document.body.style.overflow = '';
     }
 
-    // ── Section switcher ──
+    // Section switcher
     const labels = {
         overview: 'System Overview',
         rooms:    'Room Management',
@@ -1149,7 +1149,7 @@
         window.scrollTo(0, 0);
     }
 
-    // ── Course selection preview ──
+    // Course selection preview
     function onCourseSelect(sel) {
         const opt = sel.options[sel.selectedIndex];
         const p   = document.getElementById('course-preview');
@@ -1160,34 +1160,34 @@
         p.classList.add('show');
     }
 
-    // ── Click unassigned row → prefill ──
+    // Click unassigned row → prefill
     function prefillCourse(courseId) {
         const sel = document.querySelector('[name="course_id"]');
         if (sel) { sel.value = courseId; onCourseSelect(sel); }
     }
 
-    // ── Table search ──
+    // Table search
     function filterTable(tableId, q) {
         const rows = document.querySelectorAll(`#${tableId} tbody tr`);
         const lq   = q.toLowerCase();
         rows.forEach(r => r.style.display = r.textContent.toLowerCase().includes(lq) ? '' : 'none');
     }
 
-    // ── Course table programme filter ──
+    // Course table programme filter
     function filterCourseTable(prog) {
         document.querySelectorAll('#courses-table tbody tr').forEach(r => {
             r.style.display = (!prog || r.dataset.prog === prog) ? '' : 'none';
         });
     }
 
-    // ── Auto-show section from URL hash ──
+    // Auto-show section from URL hash
     const hash = location.hash.replace('#', '');
     if (hash && labels[hash]) {
         const btn = document.querySelector(`[onclick*="'${hash}'"]`);
         showSection(hash, btn);
     }
 
-    // ── Close sidebar on Escape ──
+    // Close sidebar on Escape
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') closeSidebar();
     });

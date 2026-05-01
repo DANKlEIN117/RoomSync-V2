@@ -32,7 +32,7 @@
             overflow-x: hidden;
         }
 
-        /* ── Background ── */
+        /* Background */
         .bg-layer {
             position: fixed; inset: 0; z-index: 0; pointer-events: none;
             background:
@@ -54,16 +54,14 @@
         .orb-3 { width:200px; height:200px; background:var(--accent2); opacity:.10; bottom:-60px; left:30%;    animation-duration:22s; }
         @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(30px,25px) scale(1.06)} }
 
-        /* ── Page wrapper ── */
+        /* Page wrapper */
         .page {
             position: relative; z-index: 1;
             width: 100%; min-height: 100vh; min-height: 100dvh;
             display: flex; align-items: stretch;
         }
 
-        /* ══════════════════════════════════════
-           LEFT DECORATIVE PANEL  — desktop only
-        ══════════════════════════════════════ */
+        /* LEFT DECORATIVE PANEL  — desktop only */
         .deco-panel {
             display: none;
             flex: 1; position: relative; overflow: hidden;
@@ -128,9 +126,7 @@
         .step-text { font-size: 13px; color: rgba(255,255,255,.8); line-height: 1.4; }
         .step-text strong { color: #fff; display: block; font-size: 13px; }
 
-        /* ══════════════════════════════════════
-           RIGHT FORM PANEL
-        ══════════════════════════════════════ */
+        /* RIGHT FORM PANEL */
         .form-panel {
             width: 100%;
             max-width: 520px;
@@ -164,7 +160,7 @@
             position: relative; z-index: 1;
         }
 
-        /* ── Mobile header (shown below 960px) ── */
+        /* Mobile header (shown below 960px) */
         .mobile-brand {
             display: flex; align-items: center; gap: 12px;
             margin-bottom: 28px;
@@ -182,7 +178,7 @@
         }
         .mobile-brand-text small { font-size: 11px; color: var(--muted); }
 
-        /* ── Heading ── */
+        /* Heading */
         .form-head {
             margin-bottom: 22px;
             animation: fadeUp .7s .1s cubic-bezier(.22,1,.36,1) both;
@@ -194,7 +190,7 @@
         }
         .form-head p { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-        /* ── Role selector ── */
+        /* Role selector */
         .role-selector {
             display: grid; grid-template-columns: 1fr 1fr;
             gap: 10px; margin-bottom: 20px;
@@ -223,7 +219,7 @@
         .role-btn input:checked + .role-card .role-email { color: rgba(0,229,195,.6); }
         .role-card:hover { border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.07); }
 
-        /* ── Fields ── */
+        /* Fields */
         .fields { display: flex; flex-direction: column; gap: 12px; }
         .field { animation: fadeUp .6s both; }
         .field:nth-child(1){animation-delay:.28s}
@@ -273,7 +269,7 @@
             box-shadow: 0 0 0 3px rgba(37,99,255,.10);
         }
 
-        /* ── Password strength ── */
+        /* Password strength */
         .pwd-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 7px; }
         .strength-bar { display: flex; gap: 4px; flex: 1; }
         .strength-seg { height: 3px; border-radius: 99px; flex: 1; background: rgba(255,255,255,.08); transition: background .35s; }
@@ -292,14 +288,14 @@
         }
         .eye-btn:hover { color: var(--text); }
 
-        /* ── Email hint ── */
+        /* Email hint */
         .email-hint {
             margin-top: 6px; font-size: 11px; color: rgba(232,236,244,.35);
             line-height: 1.5; display: flex; align-items: flex-start; gap: 5px;
         }
         .email-hint svg { flex-shrink: 0; margin-top: 1px; color: var(--accent2); }
 
-        /* ── Terms ── */
+        /* Terms */
         .terms-row {
             display: flex; align-items: flex-start; gap: 10px;
             margin: 16px 0 18px;
@@ -318,7 +314,7 @@
         .terms-row label a { color: var(--accent2); text-decoration: none; }
         .terms-row label a:hover { text-decoration: underline; }
 
-        /* ── Submit ── */
+        /* Submit */
         .btn-submit {
             width: 100%; min-height: 52px; padding: 14px;
             background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%);
@@ -339,7 +335,7 @@
         .btn-submit:active { transform: translateY(0); opacity: .9; }
         .btn-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
-        /* ── Divider ── */
+        /* Divider */
         .divider {
             display: flex; align-items: center; gap: 12px;
             margin: 18px 0; color: var(--muted); font-size: 12px;
@@ -347,7 +343,7 @@
         }
         .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        /* ── Login link ── */
+        /* Login link */
         .login-link {
             text-align: center; font-size: 13px; color: var(--muted);
             animation: fadeUp .7s .68s cubic-bezier(.22,1,.36,1) both;
@@ -358,7 +354,7 @@
         }
         .login-link a:hover { text-decoration: underline; }
 
-        /* ── Flash ── */
+        /* Flash */
         .flash {
             padding: 11px 14px; border-radius: 10px; font-size: 13px;
             margin-bottom: 16px; line-height: 1.5;

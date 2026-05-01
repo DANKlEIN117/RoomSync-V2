@@ -28,14 +28,14 @@
                 radial-gradient(ellipse 40% 35% at 10% 80%, rgba(37,99,255,.10) 0%, transparent 55%);
         }
 
-        /* ─── SIDEBAR OVERLAY ─── */
+        /* SIDEBAR OVERLAY */
         .sidebar-overlay {
             display: none; position: fixed; inset: 0; z-index: 199;
             background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
         }
         .sidebar-overlay.show { display: block; }
 
-        /* ─── SIDEBAR ─── */
+        /* SIDEBAR */
         .sidebar {
             width: var(--sidebar-w); min-width: var(--sidebar-w);
             height: 100vh; background: var(--panel);
@@ -124,7 +124,7 @@
         }
         .logout-link:hover { background: rgba(244,63,94,.08); color: var(--rose); }
 
-        /* ─── MAIN ─── */
+        /* MAIN */
         .main {
             flex: 1; display: flex; flex-direction: column;
             min-height: 100vh; overflow: hidden;
@@ -133,7 +133,7 @@
             transition: margin-left .3s; min-width: 0;
         }
 
-        /* ─── TOPBAR ─── */
+        /* TOPBAR */
         .topbar {
             padding: 0 20px; height: 64px; min-height: 64px;
             display: flex; align-items: center; justify-content: space-between;
@@ -174,7 +174,7 @@
         }
         .btn-create-top:hover { transform: translateY(-1px); box-shadow: 0 0 28px rgba(37,99,255,.6); }
 
-        /* ─── CONTENT ─── */
+        /* CONTENT */
         .content {
             flex: 1; overflow-y: auto;
             padding: 20px 20px 56px;
@@ -184,7 +184,7 @@
         .content::-webkit-scrollbar { width: 4px; }
         .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,.07); border-radius: 99px; }
 
-        /* ─── STATS ─── */
+        /* STATS */
         .stats-row {
             display: grid; grid-template-columns: repeat(4,1fr);
             gap: 11px; margin-bottom: 20px;
@@ -210,7 +210,7 @@
         .stat-val.v{color:#b78dff} .stat-val.b{color:#7eaaff} .stat-val.a{color:var(--amber)} .stat-val.t{color:var(--accent2)}
         .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-        /* ─── GRID ─── */
+        /* GRID */
         .grid-2 { display: grid; grid-template-columns: 1fr 360px; gap: 16px; align-items: start; }
 
         .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
@@ -218,7 +218,7 @@
         .sec-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
         .sec-count { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; background: rgba(139,92,246,.12); color: var(--violet); border: 1px solid rgba(139,92,246,.2); }
 
-        /* ─── LIST PANEL ─── */
+        /* LIST PANEL */
         .list-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px; animation: fadeUp .5s .18s both; min-width: 0; }
         .filter-row { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; -ms-overflow-style: none; }
         .filter-row::-webkit-scrollbar { display: none; }
@@ -234,7 +234,7 @@
 
         .lecture-list { display: flex; flex-direction: column; gap: 9px; }
 
-        /* ─── LECTURE ROW ─── */
+        /* LECTURE ROW */
         .lecture-row { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; transition: .2s; }
         .lecture-row:hover { border-color: rgba(139,92,246,.3); box-shadow: 0 6px 24px rgba(0,0,0,.3); }
         .lecture-row-main { display: flex; align-items: stretch; }
@@ -269,7 +269,7 @@
         .action-btn.active { background: rgba(0,229,195,.10); color: var(--accent2); border-color: rgba(0,229,195,.25); }
         .action-btn.danger:hover { background: rgba(244,63,94,.1); color: var(--rose); border-color: rgba(244,63,94,.25); }
 
-        /* ─── MESSAGE PANEL ─── */
+        /* MESSAGE PANEL */
         .lecture-msg-panel { display: none; border-top: 1px solid var(--border); padding: 0 14px 0 18px; overflow: hidden; }
         .lecture-msg-panel.open { display: block; animation: slideDown .28s cubic-bezier(.22,1,.36,1) both; }
         @keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
@@ -308,7 +308,7 @@
         @keyframes savedPulse { 0%{box-shadow:0 0 0 0 rgba(0,229,195,.5)} 100%{box-shadow:0 0 0 10px rgba(0,229,195,0)} }
         .just-saved { animation: savedPulse .6s ease-out; }
 
-        /* ─── EMPTY STATE ─── */
+        /* EMPTY STATE */
         .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; gap: 12px; }
         .empty-icon { width: 60px; height: 60px; border-radius: 16px; background: var(--glass); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 26px; }
         .empty-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; }
@@ -316,15 +316,15 @@
         .empty-cta { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 10px; background: rgba(37,99,255,.15); color: var(--accent2); border: 1px solid rgba(37,99,255,.25); font-size: 13px; font-weight: 600; cursor: pointer; transition: .18s; min-height: 44px; }
         .empty-cta:hover { background: rgba(37,99,255,.25); }
 
-        /* ─── PAGINATION ─── */
+        /* PAGINATION */
         .pagination { display: flex; gap: 8px; margin-top: 14px; justify-content: center; flex-wrap: wrap; }
         .page-btn { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--glass); color: var(--muted); font-size: 12px; text-decoration: none; transition: .18s; }
         .page-btn:hover, .page-btn.active { background: rgba(139,92,246,.18); color: var(--text); border-color: rgba(139,92,246,.35); }
 
-        /* ─── RIGHT COLUMN ─── */
+        /* RIGHT COLUMN */
         .right-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 
-        /* ─── FORM PANEL ─── */
+        /* FORM PANEL */
         .form-panel {
             background: var(--surface); border: 1px solid var(--border);
             border-radius: 18px; padding: 20px;
@@ -435,7 +435,7 @@
         .conf-link-preview { display: none; align-items: center; gap: 7px; margin-top: 6px; padding: 7px 10px; border-radius: 8px; background: rgba(139,92,246,.07); border: 1px solid rgba(139,92,246,.18); font-size: 11px; color: var(--violet); word-break: break-all; }
         .conf-link-preview.show { display: flex; }
 
-        /* ─── SUMMARY PANEL ─── */
+        /* SUMMARY PANEL */
         .summary-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px; animation: fadeUp .5s .30s both; }
         .day-schedule { display: flex; flex-direction: column; gap: 0; margin-top: 10px; }
         .day-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
@@ -452,9 +452,7 @@
 
         @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
 
-        /* ══════════════════════════
-           RESPONSIVE BREAKPOINTS
-        ══════════════════════════ */
+        /* RESPONSIVE BREAKPOINTS */
 
         /* < 1200px */
         @media (max-width: 1200px) {
@@ -664,7 +662,7 @@
 
         <div class="grid-2">
 
-            <!-- ════ Left: lecture list ════ -->
+            <!-- Left: lecture list -->
             <div class="list-panel">
                 <div class="sec-head">
                     <div><div class="sec-title">Scheduled Lectures</div><div class="sec-sub">Tap the message icon to add notes</div></div>
@@ -814,7 +812,7 @@
                 {% endif %}
             </div>
 
-            <!-- ════ Right column ════ -->
+            <!-- Right column -->
             <div class="right-col">
 
                 <div class="form-panel" id="create-form">

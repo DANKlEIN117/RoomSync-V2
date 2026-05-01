@@ -28,7 +28,7 @@
             overflow-x: hidden;
         }
 
-        /* ── Background canvas ─────────────────────────────── */
+        /* Background canvas */
         .bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none;
             background:
@@ -53,7 +53,7 @@
         .orb-b { width: 300px; height: 300px; background: var(--accent2); bottom: 5%;  left: -80px; animation-duration: 20s; animation-direction: alternate-reverse; }
         @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(40px,30px) scale(1.08); } }
 
-        /* ── Nav ───────────────────────────────────────────── */
+        /* Nav */
         nav {
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
             display: flex; align-items: center; justify-content: space-between;
@@ -94,7 +94,7 @@
         }
         .nav-links .btn-nav:hover { transform: translateY(-1px); box-shadow: 0 0 28px rgba(37,99,255,.65); color:#fff; background: var(--accent); }
 
-        /* ── Hero ──────────────────────────────────────────── */
+        /* Hero */
         .hero {
             position: relative; z-index: 1;
             min-height: 100vh;
@@ -175,7 +175,7 @@
 
         @keyframes fadeUp { from { opacity:0; transform: translateY(28px); } to { opacity:1; transform: translateY(0); } }
 
-        /* ── Stats bar ─────────────────────────────────────── */
+        /* Stats bar */
         .stats {
             display: flex; gap: 0;
             margin-top: 80px; border-radius: 18px;
@@ -198,7 +198,7 @@
         }
         .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
-        /* ── Feature cards ─────────────────────────────────── */
+        /* Feature cards */
         .features {
             position: relative; z-index: 1;
             padding: 100px 6vw;
@@ -246,7 +246,7 @@
         .card h3 { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; }
         .card p  { font-size: 14px; line-height: 1.7; color: var(--muted); }
 
-        /* ── Footer ────────────────────────────────────────── */
+        /* Footer */
         footer {
             position: relative; z-index: 1;
             text-align: center; padding: 40px 6vw;
@@ -255,11 +255,11 @@
         }
         footer span { color: var(--accent2); }
 
-        /* ── Scroll-reveal utility ─────────────────────────── */
+        /* Scroll-reveal utility */
         .reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s, transform .6s; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        /* ── Responsive ────────────────────────────────────── */
+        /* Responsive */
         @media (max-width: 640px) {
             .stats { flex-direction: column; }
             .stat { border-right: none; border-bottom: 1px solid var(--border); }

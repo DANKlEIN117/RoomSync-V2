@@ -30,9 +30,7 @@
             overflow-x: hidden;
         }
 
-        /* ══════════════════════════════════════
-           LEFT PHOTO PANEL  — desktop only
-        ══════════════════════════════════════ */
+        /* LEFT PHOTO PANEL  — desktop only */
         .photo-panel {
             flex: 1;
             position: relative;
@@ -90,9 +88,7 @@
             color: rgba(255,255,255,.55); letter-spacing: .04em;
         }
 
-        /* ══════════════════════════════════════
-           RIGHT FORM PANEL
-        ══════════════════════════════════════ */
+        /* RIGHT FORM PANEL */
         .form-panel {
             width: 100%;
             max-width: 480px;
@@ -131,7 +127,7 @@
             position: relative; z-index: 1;
         }
 
-        /* ── Mobile header strip (replaces photo panel on phones) ── */
+        /* Mobile header strip (replaces photo panel on phones) */
         .mobile-hero {
             display: flex; align-items: center; gap: 12px;
             margin-bottom: 32px;
@@ -163,7 +159,7 @@
         }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-        /* ── Heading ── */
+        /* Heading */
         .form-heading {
             margin-bottom: 24px;
             animation: fadeUp .7s .15s cubic-bezier(.22,1,.36,1) both;
@@ -175,7 +171,7 @@
         }
         .form-heading p { font-size: 14px; color: var(--muted); line-height: 1.5; }
 
-        /* ── Fields ── */
+        /* Fields */
         form { width: 100%; }
         .field { margin-bottom: 16px; animation: fadeUp .7s both; }
         .field:nth-child(1) { animation-delay: .25s; }
@@ -226,7 +222,7 @@
         }
         .eye-btn:hover { color: var(--text); }
 
-        /* ── Forgot row ── */
+        /* Forgot row */
         .forgot-row {
             display: flex; justify-content: flex-end;
             margin-top: -4px; margin-bottom: 22px;
@@ -240,7 +236,7 @@
         }
         .forgot-row a:hover { color: var(--accent2); }
 
-        /* ── Submit ── */
+        /* Submit */
         .btn-submit {
             width: 100%;
             min-height: 52px;
@@ -262,7 +258,7 @@
         .btn-submit:hover  { transform: translateY(-1px); box-shadow: 0 0 42px rgba(37,99,255,.65); }
         .btn-submit:active { transform: translateY(0); opacity: .9; }
 
-        /* ── Divider ── */
+        /* Divider */
         .divider {
             display: flex; align-items: center; gap: 12px;
             margin: 20px 0; color: var(--muted); font-size: 12px;
@@ -272,7 +268,7 @@
             content: ''; flex: 1; height: 1px; background: var(--border);
         }
 
-        /* ── Sign-up link ── */
+        /* Sign-up link */
         .signup-link {
             text-align: center; font-size: 13px; color: var(--muted);
             animation: fadeUp .7s .65s cubic-bezier(.22,1,.36,1) both;
@@ -284,7 +280,7 @@
         }
         .signup-link a:hover { opacity: .8; }
 
-        /* ── Admin link ── */
+        /* Admin link */
         .admin-link {
             display: block; text-align: center; margin-top: 18px;
             font-size: 11px; color: rgba(232,236,244,.22);
@@ -294,7 +290,7 @@
         }
         .admin-link:hover { color: var(--muted); }
 
-        /* ── Flash messages ── */
+        /* Flash messages */
         .flash {
             padding: 12px 14px; border-radius: 10px; font-size: 13px;
             margin-bottom: 18px; line-height: 1.5;

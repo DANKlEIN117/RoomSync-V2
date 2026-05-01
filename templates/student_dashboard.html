@@ -37,7 +37,7 @@
                 radial-gradient(ellipse 40% 35% at 20% 85%, rgba(0,229,195,.08) 0%, transparent 55%);
         }
 
-        /* ─── SIDEBAR ─── */
+        /* SIDEBAR */
         .sidebar {
             width: 240px;
             min-width: 240px;
@@ -122,10 +122,10 @@
         }
         .logout-link:hover { background: rgba(244,63,94,.08); color: var(--rose); }
 
-        /* ─── MAIN ─── */
+        /* MAIN */
         .main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; z-index: 1; min-width: 0; }
 
-        /* ─── TOPBAR ─── */
+        /* TOPBAR */
         .topbar {
             padding: 0 36px;
             height: 72px; min-height: 72px;
@@ -179,7 +179,7 @@
         }
         .menu-btn:hover { background: rgba(255,255,255,.07); color: var(--text); }
 
-        /* ─── CONTENT ─── */
+        /* CONTENT */
         .content {
             flex: 1;
             overflow-y: auto;
@@ -190,7 +190,7 @@
         .content::-webkit-scrollbar { width: 4px; }
         .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 99px; }
 
-        /* ─── STATS ROW ─── */
+        /* STATS ROW */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -231,7 +231,7 @@
         .stat-val.rose { color: #fb7185; }
         .stat-label { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
-        /* ─── GRID ─── */
+        /* GRID */
         .grid-2 { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
 
         .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 8px; }
@@ -240,7 +240,7 @@
         .sec-action { font-size: 12px; color: var(--accent2); text-decoration: none; font-weight: 500; transition: opacity .18s; white-space: nowrap; flex-shrink: 0; }
         .sec-action:hover { opacity: .75; }
 
-        /* ─── TIMETABLE ─── */
+        /* TIMETABLE */
         .timetable-panel {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -274,7 +274,7 @@
 
         .lecture-list { display: flex; flex-direction: column; gap: 12px; }
 
-        /* ─── LECTURE CARD ─── */
+        /* LECTURE CARD */
         .lecture-card {
             display: flex; flex-direction: column;
             background: var(--panel);
@@ -363,7 +363,7 @@
         .msg-toggle-btn svg { transition: transform .25s; }
         .msg-toggle-btn.active svg { transform: rotate(180deg); }
 
-        /* ─── STUDENT MSG PANEL ─── */
+        /* STUDENT MSG PANEL */
         .student-msg-panel { display: none; border-top: 1px solid var(--border); }
         .student-msg-panel.open { display: block; animation: smpIn .26s cubic-bezier(.22,1,.36,1) both; }
         @keyframes smpIn { from { opacity:0; transform:translateY(-5px) } to { opacity:1; transform:translateY(0) } }
@@ -402,7 +402,7 @@
         }
         .smp-join-btn:hover { background: linear-gradient(135deg, rgba(139,92,246,.45), rgba(37,99,255,.4)); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(139,92,246,.3); }
 
-        /* ─── EMPTY STATE ─── */
+        /* EMPTY STATE */
         .empty-state {
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
@@ -412,10 +412,10 @@
         .empty-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
         .empty-desc { font-size: 13px; color: var(--muted); max-width: 280px; line-height: 1.6; }
 
-        /* ─── RIGHT COL ─── */
+        /* RIGHT COL */
         .right-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 
-        /* ─── TODAY CARD ─── */
+        /* TODAY CARD */
         .today-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px; animation: fadeUp .5s .25s both; }
 
         .today-timeline { display: flex; flex-direction: column; gap: 0; margin-top: 16px; }
@@ -440,7 +440,7 @@
         }
         .tl-join:hover { background: rgba(139,92,246,.22); }
 
-        /* ─── QUICK ACTIONS ─── */
+        /* QUICK ACTIONS */
         .quick-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px; animation: fadeUp .5s .32s both; }
         .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
         .quick-btn {
@@ -455,7 +455,7 @@
         .quick-btn:hover { background: rgba(255,255,255,.06); border-color: var(--border2); color: var(--text); transform: translateY(-2px); }
         .quick-btn .qb-icon { font-size: 20px; }
 
-        /* ─── NOTICE ─── */
+        /* NOTICE */
         .notice {
             display: flex; align-items: flex-start; gap: 12px;
             padding: 14px 16px; border-radius: 12px;
@@ -466,7 +466,7 @@
         .notice-text { font-size: 12px; color: rgba(226,232,246,.7); line-height: 1.6; }
         .notice-text strong { color: var(--amber); }
 
-        /* ─── NOTIFICATIONS ─── */
+        /* NOTIFICATIONS */
         .notif-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px; animation: fadeUp .5s .28s both; }
         .notif-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
         .notif-item {
@@ -481,7 +481,7 @@
         .notif-msg { color: var(--text); flex: 1; }
         .notif-time { font-size: 10px; color: var(--muted); margin-top: 3px; }
 
-        /* ─── PAGINATION ─── */
+        /* PAGINATION */
         .pagination { display: flex; gap: 8px; margin-top: 14px; justify-content: center; flex-wrap: wrap; }
         .page-btn {
             padding: 5px 12px; border-radius: 8px;
@@ -493,7 +493,7 @@
 
         @keyframes fadeUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
 
-        /* ─── MOBILE BOTTOM NAV ─── */
+        /* MOBILE BOTTOM NAV */
         .mobile-nav {
             display: none;
             position: fixed;
@@ -517,7 +517,7 @@
         .mnav-dot-wrap { position: relative; }
         .mnav-dot { position: absolute; top: -2px; right: -4px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); border: 1.5px solid var(--panel); }
 
-        /* ─── DRAWER ─── */
+        /* DRAWER */
         .drawer-overlay {
             position: fixed; inset: 0; z-index: 50;
             background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
@@ -535,30 +535,28 @@
         }
         .drawer.open { transform: translateX(0); }
 
-        /* ══════════════════════════════
-           RESPONSIVE BREAKPOINTS
-        ══════════════════════════════ */
+        /* RESPONSIVE BREAKPOINTS */
 
-        /* ─── Large screens (< 1200px) ─── */
+        /* Large screens (< 1200px)*/
         @media (max-width: 1200px) {
             .grid-2 { grid-template-columns: 1fr 300px; }
         }
 
-        /* ─── Tablets landscape (< 1100px) ─── */
+        /* Tablets landscape (< 1100px) */
         @media (max-width: 1100px) {
             .grid-2 { grid-template-columns: 1fr; }
             .right-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
             .stats-row { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* ─── Tablets portrait (< 900px) ─── */
+        /* Tablets portrait (< 900px) */
         @media (max-width: 900px) {
             .content { padding: 24px 20px 40px; }
             .topbar { padding: 0 20px; }
             .sidebar { width: 200px; min-width: 200px; }
         }
 
-        /* ─── Mobile (< 768px) ─── */
+        /* Mobile (< 768px) */
         @media (max-width: 768px) {
             html, body { height: auto; overflow: auto; }
             body { overflow-x: hidden; display: block; }
@@ -640,7 +638,7 @@
             .notif-item { padding: 10px 12px; }
         }
 
-        /* ─── Small mobile (< 480px) ─── */
+        /* Small mobile (< 480px) */
         @media (max-width: 480px) {
             .topbar-left h1 { font-size: .9rem; }
 
@@ -695,7 +693,7 @@
             .tl-course { font-size: 12px; }
         }
 
-        /* ─── Very small (< 360px) ─── */
+        /* Very small (< 360px) */
         @media (max-width: 360px) {
             .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
             .stat-card { padding: 12px 10px; }
@@ -805,10 +803,10 @@
         {% if messages %}
         <div style="margin-bottom:20px">
             {% for category, message in messages %}
-            <div style="padding:12px 16px;border-radius:10px;margin-bottom:8px;font-size:13px;
-                background:{% if category=='error' %}rgba(244,63,94,.1){% else %}rgba(0,229,195,.1){% endif %};
-                border:1px solid {% if category=='error' %}rgba(244,63,94,.3){% else %}rgba(0,229,195,.3){% endif %};
-                color:{% if category=='error' %}#fb7185{% else %}var(--accent2){% endif %}">{{ message }}</div>
+                <div style="padding:12px 16px;border-radius:10px;margin-bottom:8px;font-size:13px;
+                    background:{% if category=='error' %}rgba(244,63,94,.1){% else %}rgba(0,229,195,.1){% endif %};
+                    border:1px solid {% if category=='error' %}rgba(244,63,94,.3){% else %}rgba(0,229,195,.3){% endif %};
+                    color:{% if category=='error' %}#fb7185{% else %}var(--accent2){% endif %}">{{ message }}</div>
             {% endfor %}
         </div>
         {% endif %}
